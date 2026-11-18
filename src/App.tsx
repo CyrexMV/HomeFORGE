@@ -178,6 +178,7 @@ export default function App() {
   const restoringHistoryRef=useRef(false);
   const total = useMemo(()=>rooms.reduce((s,r)=>{const p=r.polygon;if(!p)return s+r.w*r.h;let area=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];area+=p[i].x*q.y-q.x*p[i].y;}return s+Math.abs(area)/2;},0),[rooms]);
   const snapValue=(v:number)=>snapEnabled?Math.round(v/gridSize)*gridSize:v;
+  useEffect(()=>{try{localStorage.setItem('homeforge-project-meta',JSON.stringify({name:projectName,started:projectStarted}));}catch{};},[projectName,projectStarted]);
   useEffect(()=>{
     const snapshot=JSON.stringify({rooms,objects,floor});
     if(restoringHistoryRef.current){restoringHistoryRef.current=false;historyRef.current[historyIndexRef.current]=snapshot;return;}
@@ -282,7 +283,7 @@ export default function App() {
   };
   const finishRoom = () => { if(drawPoints.length<3){setNotice('Mindestens drei Eckpunkte setzen.');return;}const xs=drawPoints.map(p=>p.x),ys=drawPoints.map(p=>p.y),x=Math.min(...xs),y=Math.min(...ys),w=Math.max(...xs)-x,h=Math.max(...ys)-y;const polygon=drawPoints.map(p=>({x:p.x-x,y:p.y-y}));const id=Math.max(0,...rooms.map(r=>r.id))+1;setRooms(rs=>[...rs,{id,name:'Neuer Raum',x,y,w,h,polygon,color:'#d7c9ae'}]);setActive(id);setDrawPoints([]);setTool('select');setStage('design');setNotice('Freier Grundriss erstellt.');};
   const startNewProject = () => {setRooms([]);setObjects([]);setActive(0);setSelectedObjectId(null);setProjectStarted(true);setStage('draw');setTool('room');setDrawPoints([]);try{localStorage.setItem('homeforge-project-meta',JSON.stringify({name:projectName,started:true}));}catch{};setNotice('Neues Projekt angelegt – zeichne den ersten Grundriss.');};
-  const continueProject = () => {setProjectStarted(true);try{localStorage.setItem('homeforge-project-meta',JSON.stringify({name:projectName,started:true}));}catch{};setStage('draw');};
+  const continueProject = () => {setProjectStarted(true);try{localStorage.setItem('homeforge-project-meta',JSON.stringify({name:projectName,started:true}));}catch{};setStage('draw');setTool('room');setDrawPoints([]);};
   const changeStage = (next:'draw'|'design'|'furnish'|'electrical') => {setStage(next);setView('2d');setRoomModeId(null);if(next==='draw'){setTool('room');setDrawPoints([]);setPlanMode('architecture');}else if(next==='design'){setTool('select');setPlanMode('architecture');}else if(next==='furnish'){setTool('furniture');setPlanMode('architecture');}else{setTool('smart');setPlanMode('electrical');}setNotice(({draw:'Grundriss zeichnen',design:'Räume und Öffnungen gestalten',furnish:'Möblierung',electrical:'Elektro- und Smart-Home-Planung'} as Record<string,string>)[next]);};
   const removeSelected = () => { if(!room)return; if(rooms.length<=1){setNotice('Der letzte Raum kann nicht gelöscht werden.');return;} const removed=room;const next=rooms.filter(r=>r.id!==removed.id);setRooms(next);setObjects(os=>os.filter(o=>!(o.x>=removed.x&&o.x<=removed.x+removed.w&&o.y>=removed.y&&o.y<=removed.y+removed.h)));setActive(next[0].id);if(roomModeId===removed.id)leaveRoom();setNotice('Raum „'+removed.name+'“ und seine Objekte wurden gelöscht.'); };
   const selectedObject=objects.find(o=>o.id===selectedObjectId);
