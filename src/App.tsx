@@ -52,9 +52,21 @@ function WallOpeningModel({ object }: { object: PlacedObject }) {
   const sill=object.kind==='window'?(object.sillMm??900)/1000:0;
   const rotation=object.wall==='east'||object.wall==='west'?Math.PI/2:0;
   return <group position={[object.x,0,object.y]} rotation={[0,rotation,0]}>
-    {object.kind==='door' ? <><mesh position={[0,height/2,0]} castShadow><boxGeometry args={[width,height,.07]}/><meshStandardMaterial color="#825737"/></mesh><mesh position={[width*.36,height*.48,.05]}><sphereGeometry args={[.035,12,12]}/><meshStandardMaterial color="#d5b36d" metalness={.7}/></mesh></> :
+    {object.kind==='door' ? <><mesh position={[0,height/2,0]} castShadow><boxGeometry args={[width*.94,height*.98,.045]}/><meshStandardMaterial color="#825737"/></mesh><mesh position={[width*.36,height*.48,.05]}><sphereGeometry args={[.035,12,12]}/><meshStandardMaterial color="#d5b36d" metalness={.7}/></mesh></> :
     <><mesh position={[0,sill+height/2,0]}><boxGeometry args={[width,height,.09]}/><meshStandardMaterial color="#e7e9e8"/></mesh><mesh position={[0,sill+height/2,.052]}><boxGeometry args={[width-.12,height-.12,.025]}/><meshStandardMaterial color="#83c6df" transparent opacity={.58} metalness={.2} roughness={.12}/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[.045,height,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[width,.045,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh></>}
   </group>;
+}
+function WallWithOpening({ room, side, openings }: { room: Room; side: WallSide; openings: PlacedObject[] }) {
+  const length=(side==='north'||side==='south'?room.w:room.h);
+  const wallHeight=2.7, thickness=.18;
+  const z=side==='north'?-room.h/2:side==='south'?room.h/2:0;
+  const x=side==='west'?-room.w/2:side==='east'?room.w/2:0;
+  const parts: {center:number;start:number;end:number;bottom:number;top:number;id:string}[]=[];
+  const cuts=openings.map(o=>{const center=(o.offsetMm||0)/1000-length/2;const width=(o.widthMm||900)/1000;const bottom=o.kind==='window'?(o.sillMm??900)/1000:0;const top=Math.min(wallHeight,(o.kind==='door'?(o.heightMm||2100):(o.sillMm??900)+(o.heightMm||1200))/1000);return {start:Math.max(-length/2,center-width/2),end:Math.min(length/2,center+width/2),bottom,top,id:String(o.id)};}).filter(c=>c.end>c.start);
+  let cursor=-length/2;
+  cuts.sort((a,b)=>a.start-b.start).forEach(c=>{if(c.start>cursor)parts.push({center:(cursor+c.start)/2,start:cursor,end:c.start,bottom:0,top:wallHeight,id:'wall-'+cursor});if(c.bottom>0)parts.push({center:(c.start+c.end)/2,start:c.start,end:c.end,bottom:0,top:c.bottom,id:c.id+'-sill'});if(c.top<wallHeight)parts.push({center:(c.start+c.end)/2,start:c.start,end:c.end,bottom:c.top,top:wallHeight,id:c.id+'-lintel'});cursor=Math.max(cursor,c.end);});
+  if(cursor<length/2)parts.push({center:(cursor+length/2)/2,start:cursor,end:length/2,bottom:0,top:wallHeight,id:'wall-end'});
+  return <group>{parts.map(p=><mesh key={side+p.id} position={[side==='north'||side==='south'?p.center:x,(p.bottom+p.top)/2,side==='north'||side==='south'?z:p.center]} castShadow receiveShadow><boxGeometry args={[side==='north'||side==='south'?p.end-p.start:thickness,p.top-p.bottom,side==='north'||side==='south'?thickness:p.end-p.start]}/><meshStandardMaterial color="#e8edf0"/></mesh>)}</group>;
 }
 function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?: PlacedObject[]; focusRoomId?: number }) {
   const visibleRooms = focusRoomId ? rooms.filter(r=>r.id===focusRoomId) : rooms;
@@ -65,7 +77,7 @@ function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?
     <mesh rotation={[-Math.PI/2,0,0]} position={[5,0,5]}><planeGeometry args={[16,16]}/><meshStandardMaterial color="#303a43"/></mesh>
     {visibleRooms.map(r => <group key={r.id} position={[r.x+r.w/2,0.06,r.y+r.h/2]}>
       <mesh><boxGeometry args={[r.w,.12,r.h]}/><meshStandardMaterial color={r.color}/></mesh>
-      {[[0,r.h/2,r.w,.18],[0,-r.h/2,r.w,.18],[-r.w/2,0,.18,r.h],[r.w/2,0,.18,r.h]].map((v,i)=><mesh key={i} position={[v[0],1.35,v[1]]}><boxGeometry args={[v[2],2.7,v[3]]}/><meshStandardMaterial color="#e8edf0"/></mesh>)}
+      {(['north','south','west','east'] as WallSide[]).map(side=><WallWithOpening key={side} room={r} side={side} openings={objects.filter(o=>(o.kind==='door'||o.kind==='window')&&o.wall===side&&o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01)}/>)}
     </group>)}
     {visibleRooms.flatMap(r=>objects.filter(o=>o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01).map(o=>o.kind==='furniture'?<FurnitureModel key={o.id} object={o}/>:o.kind==='door'||o.kind==='window'?<WallOpeningModel key={o.id} object={o}/>:<group key={o.id} position={[o.x,0,o.y]}><mesh position={[0,.35,0]}><boxGeometry args={[.7,.45,.12]}/><meshStandardMaterial color="#f2d27c"/></mesh></group>))}
   </Canvas>;
