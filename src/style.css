@@ -355,3 +355,5 @@ button,input,select{font-family:inherit}
 :root[data-theme="dark"] .psStatusPill{background:#1c241c;border-color:#34412a;color:#b1c881}
 :root[data-theme="dark"] .themeToggle{background:#17232d;border-color:#334650;color:#ffd477}
 :root[data-theme="dark"] .welcomeThemeToggle{position:absolute;top:22px;right:24px}
+
+.projectWelcome .welcomeThemeToggle{position:absolute;top:22px;right:24px;z-index:2}
