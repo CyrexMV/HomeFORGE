@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Check, Crosshair, Grid3X3, MousePointer2, Plus, Trash2, Undo2 } from 'lucide-react';
-import { distance, offsetPolygonInward, polygonArea, snapPoint, type Vec2 } from '../engine/geometry';
+import { distance, offsetPolygonInward, polygonArea, snapPoint } from '../engine/geometry';
 import { useBuildingProject } from '../engine/projectStore';
-import type { ToolMode } from '../engine/model';
+import type { ToolMode, Vec2 } from '../engine/model';
 
 type Props = { onBack: () => void };
 const VIEW_W=32, VIEW_H=24, EDGE_SNAP_M=.32;
@@ -32,8 +32,8 @@ export default function PlotEditor({onBack}:Props){
     save();
   },[project]);
 
-  const toWorld=(event:ReactPointerEvent<SVGSVGElement>):Vec2=>{
-    const svg=event.currentTarget,point=svg.createSVGPoint();
+  const toWorld=(event:{clientX:number;clientY:number;currentTarget:SVGElement}):Vec2=>{
+    const svg=event.currentTarget.ownerSVGElement||event.currentTarget as SVGSVGElement,point=svg.createSVGPoint();
     point.x=event.clientX;point.y=event.clientY;
     const matrix=svg.getScreenCTM()?.inverse();
     if(!matrix)return {x:0,y:0};
