@@ -54,7 +54,7 @@ export default function App() {
   const save = () => { localStorage.setItem('homeforge-project',JSON.stringify({rooms,objects,floor})); setNotice('Projekt lokal gespeichert'); };
   const exportJson = () => { const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({rooms,objects,floor},null,2)],{type:'application/json'}));a.download='homeforge-projekt.json';a.click();URL.revokeObjectURL(a.href); };
   const addRoom = () => { const id=Math.max(0,...rooms.map(r=>r.id))+1;const r={id,name:'Neuer Raum',x:2+(id%3),y:2+(id%2)*4,w:3.5,h:3,color:'#d7c9ae'};setRooms([...rooms,r]);setActive(id);setTool('select'); };
-  const point = (e: React.PointerEvent<HTMLDivElement>) => { const rect=e.currentTarget.getBoundingClientRect();return {x:Math.max(0,Math.min(12,(e.clientX-rect.left)/zoom/48)),y:Math.max(0,Math.min(11,(e.clientY-rect.top)/zoom/48))}; };
+  const point = (e: React.PointerEvent<HTMLDivElement>) => { const rect=(e.currentTarget.closest('.plan') as HTMLElement).getBoundingClientRect();return {x:Math.max(0,Math.min(12,(e.clientX-rect.left)/zoom/48)),y:Math.max(0,Math.min(11,(e.clientY-rect.top)/zoom/48))}; };
   const onPlanDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).closest('.room')) return;
     const p=point(e);
