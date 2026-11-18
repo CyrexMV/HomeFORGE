@@ -5,3 +5,5 @@
 
 /* HomeForge 0.2 editor interactions */
 .plan{touch-action:none;user-select:none}.room{touch-action:none;user-select:none;cursor:grab}.room:active{cursor:grabbing}.placedObject{position:absolute;z-index:5;width:30px;height:30px;padding:0;border:1px solid #d5a76a;border-radius:7px;background:#17212bdc;color:#fff;font-size:17px;display:grid;place-items:center;box-shadow:0 2px 8px #0006}.placedObject:hover{transform:scale(1.12)}.placedObject.window{border-color:#83c6df}.placedObject.furniture{border-color:#b9d4a5}.placedObject.light{border-color:#f0d37d}.drawAnchor{position:absolute;width:10px;height:10px;border-radius:50%;background:#e8bd86;border:2px solid white;z-index:8;pointer-events:none;box-shadow:0 0 0 5px #e8bd8644}
+
+.planViewport{touch-action:none;overscroll-behavior:contain}.plan{transform-origin:center center;will-change:transform}
