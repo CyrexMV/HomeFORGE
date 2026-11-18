@@ -283,3 +283,75 @@ button,input,select{font-family:inherit}
 .psMeasure{font-size:.42px}.psPointLabel{font-size:.42px}.psAxisLabel{font-size:.35px}.psSetback{fill:#4eaaa21c;stroke:#168b83;stroke-width:.11px}.psBoundary{stroke-width:.1px}.psBoundaryLine{stroke-width:.1px}.psSelectedEdge{stroke:#f09a3e;stroke-width:2px;stroke-linecap:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 2px #efa54d80)}
 @media(max-width:900px){.project .saved{display:none}.workflowNav button span{font-size:9px}.left,.right{background:#fff}}
 @media(max-width:650px){.top,.canvasHead,.bottomBar{background:#fff}.left,.right{background:#fff;box-shadow:0 8px 30px #21384320}}
+
+
+/* Dark studio theme */
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="dark"] body,:root[data-theme="dark"] .app,:root[data-theme="dark"] .workspace,:root[data-theme="dark"] .main{background:#0b1117;color:#e2e9ee}
+:root[data-theme="dark"] .top,:root[data-theme="dark"] .workflowNav,:root[data-theme="dark"] .left,:root[data-theme="dark"] .right,:root[data-theme="dark"] .canvasHead,:root[data-theme="dark"] .bottomBar,:root[data-theme="dark"] .canvasFooter{background:#111a22;color:#d7e1e7;border-color:#293943;box-shadow:none}
+:root[data-theme="dark"] .brand b,:root[data-theme="dark"] .project,:root[data-theme="dark"] .canvasHead,:root[data-theme="dark"] .inspector h3,:root[data-theme="dark"] .sideHead{color:#d8e3e9}
+:root[data-theme="dark"] .brand small,:root[data-theme="dark"] .project .saved,:root[data-theme="dark"] .crumb span,:root[data-theme="dark"] .inspector p,:root[data-theme="dark"] .inspector small,:root[data-theme="dark"] .bottomBar>span{color:#8799a5}
+:root[data-theme="dark"] .workflowNav button{color:#97a7b1}
+:root[data-theme="dark"] .workflowNav button b{border-color:#34434d;color:#aab8c0}
+:root[data-theme="dark"] .workflowNav button.active{color:#77a8ff;border-color:#4d82d2}
+:root[data-theme="dark"] .workflowNav button.active b{background:#192c43;border-color:#375d91;color:#83b2ff}
+:root[data-theme="dark"] .topActions .iconBtn,:root[data-theme="dark"] .bottomBar button{background:#17232d;color:#c4d1d8;border-color:#33434d}
+:root[data-theme="dark"] .topActions .share{background:#286bd0;color:#fff;border-color:#286bd0}
+:root[data-theme="dark"] .sideHead,:root[data-theme="dark"] .sideDivider,:root[data-theme="dark"] .category,:root[data-theme="dark"] .floor,:root[data-theme="dark"] .stat{border-color:#293943}
+:root[data-theme="dark"] .tool,:root[data-theme="dark"] .category,:root[data-theme="dark"] .floor,:root[data-theme="dark"] .inspector,:root[data-theme="dark"] .dimension{color:#b6c4cc}
+:root[data-theme="dark"] .tool:hover,:root[data-theme="dark"] .category:hover,:root[data-theme="dark"] .floor:hover,:root[data-theme="dark"] .quick:hover{background:#1a2933;color:#e2ebf0}
+:root[data-theme="dark"] .tool.chosen,:root[data-theme="dark"] .floor.activeFloor{background:#182b40;color:#8bb7ff;border-color:#355578}
+:root[data-theme="dark"] .viewSwitch,:root[data-theme="dark"] .canvasTools,:root[data-theme="dark"] .quick,:root[data-theme="dark"] .furnitureCatalog{background:#151f27;border-color:#2d3d47;color:#afbec7}
+:root[data-theme="dark"] .viewSwitch button,:root[data-theme="dark"] .canvasTools button{color:#a0b0ba}
+:root[data-theme="dark"] .viewSwitch button.on{background:#21313d;color:#8cb8ff;box-shadow:none}
+:root[data-theme="dark"] .canvasTools button.snapActive{background:#1d3550;color:#8cb8ff}
+:root[data-theme="dark"] .canvasTools i{background:#34434d}
+:root[data-theme="dark"] .gridSelect,:root[data-theme="dark"] .canvasTools select,:root[data-theme="dark"] .field input,:root[data-theme="dark"] .field select,:root[data-theme="dark"] .openingInspector select{background:#0d151b;border-color:#33434d;color:#d8e2e8}
+:root[data-theme="dark"] .canvasArea{background:#0d151b}
+:root[data-theme="dark"] .planViewport{background-color:#0d151b!important;background-image:radial-gradient(#293943 .7px,transparent .7px)!important}
+:root[data-theme="dark"] .plan{box-shadow:0 12px 34px #0008;border-color:#344651}
+:root[data-theme="dark"] .canvasFooter svg{color:#9bb6c5}
+:root[data-theme="dark"] .inspector h3,:root[data-theme="dark"] .sideHead span{color:#d6e1e7}
+:root[data-theme="dark"] .areaCard{background:#142334;border-color:#28425c}
+:root[data-theme="dark"] .areaCard span,:root[data-theme="dark"] .stat{color:#a0b0ba}
+:root[data-theme="dark"] .areaCard b,:root[data-theme="dark"] .stat b,:root[data-theme="dark"] .bottomBar>span b{color:#d6e5ee}
+:root[data-theme="dark"] .polygonVertexList button{background:#15212a;border-color:#2d3d47;color:#b9c8d0}
+:root[data-theme="dark"] .projectWelcome{background:radial-gradient(ellipse at 14% 12%,#182d43 0,transparent 38%),linear-gradient(135deg,#0b1117,#111d27);color:#dce7ed}
+:root[data-theme="dark"] .welcomeCard{background:#121c24;border-color:#2a3b46;box-shadow:0 22px 70px #0006}
+:root[data-theme="dark"] .welcomeBrand b,:root[data-theme="dark"] .welcomeCard h1{color:#e1e9ee}
+:root[data-theme="dark"] .welcomeBrand small,:root[data-theme="dark"] .welcomeCard p,:root[data-theme="dark"] .welcomeCard label{color:#9aabb5}
+:root[data-theme="dark"] .welcomeCard input{background:#0b141a;border-color:#344650;color:#e1e9ee}
+:root[data-theme="dark"] .welcomeSecondary{background:#17242e;border-color:#344650;color:#c5d2d9}
+:root[data-theme="dark"] .welcomeSteps{border-color:#2c3d47;color:#a8b7bf}
+:root[data-theme="dark"] .plotStudio{background:#0b1117;color:#dce6eb}
+:root[data-theme="dark"] .psTopbar,:root[data-theme="dark"] .psContextbar,:root[data-theme="dark"] .psLeftPanel,:root[data-theme="dark"] .psRightPanel,:root[data-theme="dark"] .psCanvasToolbar,:root[data-theme="dark"] .psStatusbar{background:#111a22;border-color:#293943;color:#c6d4dc}
+:root[data-theme="dark"] .psWorkspace,:root[data-theme="dark"] .psCanvasColumn{background:#0b1117}
+:root[data-theme="dark"] .psCanvasFrame{background:#0c141a}
+:root[data-theme="dark"] .psCanvasSurface{background:#0e171e;border-color:#2d3e48;box-shadow:inset 0 1px #ffffff08}
+:root[data-theme="dark"] .psPanelHeading h1,:root[data-theme="dark"] .psRightHead h2,:root[data-theme="dark"] .psCanvasTitle b,:root[data-theme="dark"] .psBrand b{color:#e0e9ee}
+:root[data-theme="dark"] .psProjectName,:root[data-theme="dark"] .psBackButton,:root[data-theme="dark"] .psActionButton,:root[data-theme="dark"] .psMode,:root[data-theme="dark"] .psToggle,:root[data-theme="dark"] .psExportButton{color:#c2d0d8}
+:root[data-theme="dark"] .psPanelHeading>div>span,:root[data-theme="dark"] .psRightHead>div>span,:root[data-theme="dark"] .psSectionTitle,:root[data-theme="dark"] .psPropertyHeading,:root[data-theme="dark"] .psFieldLabel,:root[data-theme="dark"] .psFloorGroup>label{color:#91a3ad}
+:root[data-theme="dark"] .psMode,:root[data-theme="dark"] .psToggle,:root[data-theme="dark"] .psActionButton,:root[data-theme="dark"] .psPhase,:root[data-theme="dark"] .psCanvasTool,:root[data-theme="dark"] .psZoom button{background:transparent}
+:root[data-theme="dark"] .psMode.active{background:#192c40;border-color:#31547b;color:#93bdff;box-shadow:none}
+:root[data-theme="dark"] .psModeIcon,:root[data-theme="dark"] .psCanvasGlyph,:root[data-theme="dark"] .psMiniButton,:root[data-theme="dark"] .psIconButton,:root[data-theme="dark"] .psBackButton,:root[data-theme="dark"] .psZoom{background:#17232d;border-color:#30414b;color:#b8c7cf}
+:root[data-theme="dark"] .psToggle.on .psSwitch{background:#3978d5}
+:root[data-theme="dark"] .psSelectWrap select,:root[data-theme="dark"] .psUnitInput,:root[data-theme="dark"] .psEdgeRow{background:#0d151b;border-color:#30414b;color:#d0dce2}
+:root[data-theme="dark"] .psSelectWrap select,:root[data-theme="dark"] .psUnitInput input{color:#dce6eb}
+:root[data-theme="dark"] .psSection,:root[data-theme="dark"] .psPropertyGroup,:root[data-theme="dark"] .psLeftFooter,:root[data-theme="dark"] .psInspectorFooter{border-color:#293943}
+:root[data-theme="dark"] .psSectionCopy,:root[data-theme="dark"] .psShortcut,:root[data-theme="dark"] .psPropertyLine,:root[data-theme="dark"] .psStatusbar,:root[data-theme="dark"] .psCoordinates,:root[data-theme="dark"] .psCanvasTitle small{color:#96a8b2}
+:root[data-theme="dark"] .psPropertyLine b,:root[data-theme="dark"] .psEdgeNames b,:root[data-theme="dark"] .psEdgeRow>strong{color:#d2dfe5}
+:root[data-theme="dark"] .psAreaCard{background:linear-gradient(125deg,#172538,#13202c);border-color:#293f55}
+:root[data-theme="dark"] .psAreaCard b{color:#d9e8f2}
+:root[data-theme="dark"] .psAreaIcon,:root[data-theme="dark"] .psEdgeBadge,:root[data-theme="dark"] .psAvatar{background:#1c2d3b;color:#9cc2f2}
+:root[data-theme="dark"] .psEdgeRow.selected,:root[data-theme="dark"] .psEdgeRow:hover{background:#182838;border-color:#2c4660}
+:root[data-theme="dark"] .psCompass,:root[data-theme="dark"] .psCanvasLegend,:root[data-theme="dark"] .psDrawPrompt{background:#14212bf2;border-color:#334651;color:#c2d0d7}
+:root[data-theme="dark"] .psAxisLine{stroke:#344650}
+:root[data-theme="dark"] .psAxisLabel{fill:#9aabb4}
+:root[data-theme="dark"] .psMeasureBg{fill:#14212b;stroke:#405563}
+:root[data-theme="dark"] .psMeasure{fill:#d4e1e7}
+:root[data-theme="dark"] .psPointLabel{fill:#a9ccff;stroke:#0e171e}
+:root[data-theme="dark"] .psSetback{fill:#168b8328;stroke:#43c3b5}
+:root[data-theme="dark"] .psBoundary,:root[data-theme="dark"] .psBoundaryLine{stroke:#5d9aff}
+:root[data-theme="dark"] .psStatusPill{background:#1c241c;border-color:#34412a;color:#b1c881}
+:root[data-theme="dark"] .themeToggle{background:#17232d;border-color:#334650;color:#ffd477}
+:root[data-theme="dark"] .welcomeThemeToggle{position:absolute;top:22px;right:24px}
