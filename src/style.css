@@ -74,3 +74,121 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .plan.electrical .dimension{color:#313a40;text-shadow:0 1px 2px #fff}
 .canvasTools button.snapActive{background:#e8edf0;color:#1e4d77;box-shadow:inset 0 0 0 1px #55728a}
 @media(max-width:650px){.plan.architecture .roomName{font-size:14px}.plan.architecture .room small{font-size:11px;padding:4px 10px}}
+
+
+/* HOMEFORGE NEXUS — high-end tablet studio visual system */
+:root{color-scheme:dark;--hf-bg:#080d14;--hf-panel:#101923;--hf-panel2:#14212d;--hf-line:#263746;--hf-muted:#91a3b2;--hf-text:#edf5f7;--hf-accent:#6ce0cb;--hf-accent2:#8da9ff;--hf-warm:#e9bd86}
+body{background:var(--hf-bg);color:var(--hf-text);overscroll-behavior:none}
+.app{background:radial-gradient(ellipse at 50% -25%,#1b3543 0%,#0a121b 48%,#080d14 100%);color:var(--hf-text)}
+.top{height:72px;padding:0 24px;background:rgba(10,17,25,.88);border-bottom:1px solid #2a3e4d;backdrop-filter:blur(24px);gap:28px;box-shadow:0 8px 35px #0003}
+.brandIcon{width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#8af0dc,#4bbba9);color:#06221f;box-shadow:0 6px 24px #51d3bd33}
+.brand b{font-size:19px;letter-spacing:-.4px}.brand small{color:#6e9b9b;letter-spacing:2.4px;font-size:9px}
+.project{padding:9px 14px;border:1px solid #2c4554;border-radius:999px;background:#12212b;color:#dce9ed}
+.liveDot{background:#6ce0cb;box-shadow:0 0 12px #6ce0cb88}
+.saved{color:#86a3b0}
+.iconBtn,.canvasTools button,.bottomBar button,.sideHead button{border-radius:10px;transition:background .18s,color .18s,transform .18s}
+.iconBtn:hover,.canvasTools button:hover{background:#213542;color:#a3f6e8}
+.share{border-radius:11px;background:linear-gradient(135deg,#82f0dc,#4abcae);color:#08211e;padding:12px 17px;box-shadow:0 8px 24px #4ac9b533;font-weight:800}
+.workspace{gap:0}
+.left,.right{background:rgba(13,22,31,.94);border-color:#263b49;backdrop-filter:blur(22px)}
+.left{width:258px}.right{width:300px}
+.sideHead{height:58px;padding:0 19px;color:#80a0ad;letter-spacing:1.6px}
+.toolList{padding:0 12px;gap:5px}
+.tool{height:46px;border-radius:11px;color:#a9bbc5;font-size:12px;gap:13px}
+.tool svg{color:#82a6b6}
+.tool.chosen{background:linear-gradient(100deg,#173c43,#162a36);color:#8af0dc;box-shadow:inset 3px 0 #6ce0cb,0 5px 18px #0002}
+.tool.chosen svg{color:#6ce0cb}
+.tool:hover,.category:hover,.floor:hover,.quick:hover{background:#1b303d;color:#eaf9f8}
+.sideDivider{background:linear-gradient(90deg,transparent,#2d4654,transparent);margin:18px 0}
+.category{height:44px;border-radius:9px;color:#afc0c9;padding:0 18px;font-size:12px}
+.category span{color:#72cfc3}
+.floor{height:42px;border-radius:9px;font-size:12px}
+.activeFloor{background:#173b43;color:#8af0dc;box-shadow:inset 0 0 0 1px #367c79}
+.main{background:#0b121a}
+.canvasHead{height:62px;background:rgba(13,22,31,.9);border-color:#263b49;padding:0 22px}
+.crumb{font-size:13px}.crumb span{color:#73909f}.crumb strong{color:#eaf4f5}
+.viewSwitch{background:#09131b;border:1px solid #2c4554;border-radius:12px;padding:4px}
+.viewSwitch button{border-radius:9px;padding:9px 15px;font-size:12px}
+.viewSwitch button.on{background:linear-gradient(135deg,#254c55,#1a3742);color:#8af0dc;box-shadow:inset 0 0 0 1px #3b827d}
+.canvasTools{gap:5px}.canvasTools button{border-radius:9px;color:#9db2bd;padding:8px}
+.canvasTools button.snapActive{background:#173c43;color:#8af0dc;box-shadow:inset 0 0 0 1px #438b83}
+.gridSelect{background:#111e29;border-color:#304957;border-radius:8px;color:#c9d8df}
+.canvasArea{background-color:#0b151e;background-image:radial-gradient(#49617155 1px,transparent 1px);background-size:22px 22px}
+.plan{border:1px solid #c8d5da;box-shadow:0 25px 80px #0009,0 0 0 8px #d7e0e311;background-color:#f7fafb;background-image:linear-gradient(#dce5e8 1px,transparent 1px),linear-gradient(90deg,#dce5e8 1px,transparent 1px);background-size:24px 24px}
+.plan.architecture .room{border:4px solid #153c50;box-shadow:inset 0 0 0 1px #ffffffaa,0 2px 5px #18394a22}
+.plan.architecture .room:nth-of-type(even){border-color:#315c91}
+.plan.architecture .room.selectedRoom{outline:3px solid #24a995;outline-offset:3px;box-shadow:0 0 0 6px #24a99522}
+.plan.architecture .roomName{letter-spacing:-.3px;color:#102d3c}
+.plan.architecture .room small{border-radius:5px;border-color:#a8c2cc;background:#ffffffc9;color:#375766}
+.plan.electrical{background-color:#f9fbfc}
+.plan.electrical .room{border-color:#526d7b;background:#ffffffd9!important}
+.placedObject{border-radius:10px;background:#102733ed;border:1px solid #6ce0cb;color:#eafffb;box-shadow:0 4px 14px #08202b55}
+.placedObject.furniture{border-color:#91b6a0;background:#203a34}
+.placedObject.smart{border-color:#6ce0cb;background:#123b38}
+.placedObject.stair{border-color:#a8b4ff;background:#293456}
+.placedObject.door{background:#795331;border-color:#f2d4a8}
+.placedObject.window{background:#4b9bb5;border-color:#d2f3ff}
+.placedObject.selectedPlaced{outline-color:#6ce0cb;box-shadow:0 0 0 2px #0c1a22,0 0 0 6px #6ce0cb,0 8px 25px #0009}
+.canvasFooter{background:#0d1822ed;border-color:#2a414f;color:#9db0bb;height:40px}
+.canvasFooter span:first-child{color:#d7e8ec}
+.bottomBar{height:42px;background:#0d1720;border-color:#263b49;color:#7f9aa7}
+.bottomBar b{color:#9de9dc}.bottomBar button:hover{background:#1b3542;color:#8af0dc}
+.inspector{padding:8px 19px 15px}
+.inspector>label,.field label{color:#81a0ae;letter-spacing:1.25px}
+.inspector h3{font-size:18px;letter-spacing:-.4px;color:#eaf5f5}
+.inspector p{color:#8ea5b1;font-size:11px}
+.field input,.openingInspector select{background:#0b1721;border-color:#304856;border-radius:9px;color:#e7f1f3;height:42px}
+.field input:focus,.openingInspector select:focus{border-color:#6ce0cb;box-shadow:0 0 0 3px #6ce0cb18}
+.areaCard{background:linear-gradient(135deg,#15343b,#172b3a);border-color:#32616a;border-radius:12px;padding:15px}
+.areaCard b{color:#8af0dc;font-size:18px}
+.stat{border-color:#243b49;color:#a9bdc6;padding:12px 0}
+.stat b{color:#e4f0f2}
+.quick{height:43px;background:#142530;border-color:#2d4856;border-radius:9px;color:#c8dbe0}
+.delete{color:#f19b96}
+.furnitureCatalog{background:#0a151e;border-color:#2a4351;border-radius:12px;padding:12px;gap:7px}
+.furnitureCatalog small{color:#6ce0cb;font-size:9px}
+.furnitureCatalog button{background:#172a35;border-radius:8px;border-color:#294553;color:#c0d1d8;padding:10px 8px;font-size:10px;min-height:42px}
+.furnitureCatalog button:hover,.furnitureCatalog button.selectedFurniture{background:#1b4647;border-color:#58c6b8;color:#a2f4e8}
+.drawControls,.roomModeBar{background:#0d1a24ed;border-color:#42616d;border-radius:14px;box-shadow:0 15px 40px #0008;backdrop-filter:blur(20px)}
+.drawControls button,.roomModeBar button{background:#1c3642;border-color:#3c5966;color:#d9eeee;border-radius:9px;min-height:40px}
+.drawControls button:last-child:not(:disabled),.roomModeBar button{background:linear-gradient(135deg,#82f0dc,#4abcae);border-color:#6ce0cb;color:#06221f;font-weight:800}
+.threeView{background:radial-gradient(ellipse at 50% 35%,#1a3441,#0a121a 75%)}
+.threeLabel{top:20px;left:20px;padding:9px 13px;border:1px solid #35515f;border-radius:999px;background:#0b1822bb;color:#9edbd5;backdrop-filter:blur(12px)}
+.roomModeBar{top:16px;left:16px;right:16px;padding:13px 16px}
+.roomModeBar b{color:#6ce0cb}
+.reopen{background:#10232e;border-color:#3c5c68;color:#8de8dc;border-radius:10px}
+.liveDot{flex-shrink:0}
+button,input,select{accent-color:#6ce0cb}
+button{transition:background .16s,border-color .16s,color .16s,transform .16s}
+button:active{transform:translateY(1px)}
+@media(max-width:1100px){.left{width:224px}.right{width:260px}.top{gap:15px}.canvasHead{padding:0 13px}.viewSwitch button{padding:8px 10px}}
+@media(max-width:760px){
+ .app{height:100dvh;min-height:100dvh}
+ .top{height:60px;padding:0 12px;gap:10px}
+ .brand{gap:8px}.brandIcon{width:36px;height:36px}.brand b{font-size:16px}.brand small{display:none}
+ .project{padding:7px 9px;font-size:10px;max-width:40vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .project .saved{display:none}.topActions{gap:4px}.share{font-size:0;padding:9px 11px}.share svg{width:18px}
+ .left{position:fixed;z-index:30;left:0;top:60px;bottom:0;width:min(310px,86vw);box-shadow:18px 0 50px #0009}
+ .left.hide{width:0}.right{position:fixed;z-index:30;right:0;top:60px;bottom:0;width:min(340px,90vw);box-shadow:-18px 0 50px #0009}
+ .right.hide{width:0}.workspace{position:relative}
+ .canvasHead{height:auto;min-height:58px;padding:7px 9px;gap:7px;flex-wrap:wrap}
+ .crumb{font-size:11px;min-width:70px}.viewSwitch{order:3;margin:0 auto}
+ .viewSwitch button{padding:8px 11px;font-size:11px}
+ .canvasTools{margin-left:auto;gap:2px}.canvasTools button{min-width:40px;min-height:40px;padding:8px}
+ .canvasTools i{margin:0 2px}.gridSelect{height:40px;min-width:62px}
+ .canvasArea{min-height:0}.planViewport{align-items:center;justify-content:center}
+ .canvasFooter{height:36px;padding:0 9px;gap:10px;font-size:9px}
+ .bottomBar{height:40px;padding:0 8px;gap:8px;font-size:9px}
+ .rightReopen{top:126px}.leftReopen{top:10px}
+ .inspector{padding-left:17px;padding-right:17px}
+}
+@media(min-width:761px) and (max-width:1100px){.left{width:210px}.right{width:250px}}
+@media(pointer:coarse){
+ button{min-height:42px}.tool{height:49px}.category{height:47px}.floor{height:45px}
+ .placedObject{width:42px;height:42px;font-size:20px}
+ .iconBtn,.canvasTools button,.bottomBar button{min-width:42px;min-height:42px}
+}
+@media(orientation:landscape) and (max-height:620px){
+ .top{height:52px}.canvasHead{height:48px}.bottomBar{height:34px}
+ .left,.right{max-height:calc(100dvh - 134px)}
+}
