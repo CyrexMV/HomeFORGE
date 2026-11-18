@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowDownRight, ArrowLeft, ArrowUp, Check, ChevronDown, Crosshair, Grid3X3, Layers3, Minus, MousePointer2, Plus, RotateCcw, Ruler, Scan, Settings2, Trash2, Undo2 } from 'lucide-react';
+import { ArrowDownRight, ArrowLeft, ArrowUp, Check, ChevronDown, Crosshair, Grid3X3, Layers3, Minus, Moon, MousePointer2, Plus, RotateCcw, Ruler, Scan, Settings2, Sun, Trash2, Undo2 } from 'lucide-react';
 import { distance, offsetPolygonInward, polygonArea, snapPoint } from '../engine/geometry';
 import { useBuildingProject } from '../engine/projectStore';
 import type { ToolMode, Vec2 } from '../engine/model';
 
 type Props={onNavigate:(stage:'draw'|'design'|'furnish'|'electrical')=>void};
+
+export function ThemeToggle({plot=false}:{plot?:boolean}){
+  const [dark,setDark]=useState(()=>{let saved=false;try{saved=localStorage.getItem('homeforge-theme')==='dark';}catch{}if(typeof document!=='undefined')document.documentElement.dataset.theme=saved?'dark':'light';return saved;});
+  useEffect(()=>{document.documentElement.dataset.theme=dark?'dark':'light';try{localStorage.setItem('homeforge-theme',dark?'dark':'light');}catch{}},[dark]);
+  return <button type="button" className={plot?'psIconButton themeToggle':'iconBtn themeToggle'} aria-label={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} aria-pressed={dark} title={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} onClick={()=>setDark(value=>!value)}>{dark?<Sun size={16}/>:<Moon size={16}/>}</button>;
+}
 const VIEW_W=32,VIEW_H=24,CENTER_X=12.5,CENTER_Y=10,EDGE_SNAP_M=.32;
 const modes:{id:ToolMode;label:string;icon:typeof Crosshair;hint:string}[]=[
   {id:'select',label:'Auswählen',icon:MousePointer2,hint:'Objekte und Grundstückspunkte auswählen.'},
@@ -90,7 +96,7 @@ export default function PlotEditor({onNavigate}:Props){
       <div className="psTopDivider"/>
       <div className="psProject"><span className="psProjectLabel">PROJEKT</span><button className="psProjectName">{project.name}<ChevronDown size={14}/></button></div>
       <div className="psTopStatus"><span className="psStatusDot"/> Alle Änderungen gespeichert <span className="psStatusDivider"/> <span>{activeFloor?.name||'Erdgeschoss'}</span></div>
-      <div className="psTopActions"><button className="psIconButton" title="Ansicht einpassen" onClick={()=>setZoom(1)}><Scan size={17}/></button><button className="psBackButton" onClick={()=>onNavigate('draw')}><ArrowLeft size={16}/> Gebäudeplanung</button></div>
+      <div className="psTopActions"><ThemeToggle plot/><button className="psIconButton" title="Ansicht einpassen" onClick={()=>setZoom(1)}><Scan size={17}/></button><button className="psBackButton" onClick={()=>onNavigate('draw')}><ArrowLeft size={16}/> Gebäudeplanung</button></div>
     </header>
     <div className="psContextbar"><div className="psBreadcrumb"><span>PLANUNG</span><span className="psCrumbSlash">/</span><b>GRUNDSTÜCK</b></div><div className="psPhaseSteps"><div className="psPhase active"><span>01</span><b>Grundstück</b></div><i/><button className="psPhase" onClick={()=>onNavigate('draw')}><span>02</span><b>Gebäude</b></button><i/><button className="psPhase" onClick={()=>onNavigate('furnish')}><span>03</span><b>Möblierung</b></button><i/><button className="psPhase" onClick={()=>onNavigate('electrical')}><span>04</span><b>Technik</b></button></div><div className="psContextRight"><span className="psStatusPill"><span/> ENTWURF</span><button className="psExportButton" onClick={()=>onNavigate('design')}>Plan öffnen <ArrowDownRight size={14}/></button></div></div>
 
