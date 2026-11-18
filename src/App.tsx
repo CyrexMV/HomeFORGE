@@ -79,12 +79,16 @@ function WallOpeningModel({ object }: { object: PlacedObject }) {
   const height=(object.heightMm||(object.kind==='door'?2100:1200))/1000;
   const sill=object.kind==='window'?(object.sillMm??900)/1000:0;
   const rotation=object.wall==='east'||object.wall==='west'?Math.PI/2:0;
+  const doorColor=object.doorStyle==='classic'?'#765039':object.doorStyle==='glass'?'#a8dce7':object.doorStyle==='sliding'?'#9baab2':'#b18a62';
+  const frameColor=object.windowStyle==='industrial'?'#303c45':'#f1f4f2';
   return <group position={[object.x,0,object.y]} rotation={[0,rotation,0]}>
-    {object.kind==='door' ? <><mesh position={[0,height/2,0]} castShadow><boxGeometry args={[width*.94,height*.98,.045]}/><meshStandardMaterial color="#825737"/></mesh><mesh position={[width*.36,height*.48,.05]}><sphereGeometry args={[.035,12,12]}/><meshStandardMaterial color="#d5b36d" metalness={.7}/></mesh></> :
-    <><mesh position={[0,sill+height/2,0]}><boxGeometry args={[width,height,.09]}/><meshStandardMaterial color="#e7e9e8"/></mesh><mesh position={[0,sill+height/2,.052]}><boxGeometry args={[width-.12,height-.12,.025]}/><meshStandardMaterial color="#83c6df" transparent opacity={.58} metalness={.2} roughness={.12}/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[.045,height,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[width,.045,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh></>}
+    {object.kind==='door' ? <>
+      {object.doorStyle==='sliding' ? <><mesh position={[-width*.24,height/2,0]} castShadow><boxGeometry args={[width*.48,height*.97,.055]}/><meshStandardMaterial color={doorColor} metalness={.25} roughness={.35}/></mesh><mesh position={[width*.24,height/2,.015]} castShadow><boxGeometry args={[width*.48,height*.97,.055]}/><meshStandardMaterial color={doorColor} metalness={.25} roughness={.35}/></mesh><mesh position={[0,height+.035,0]}><boxGeometry args={[width*1.08,.045,.12]}/><meshStandardMaterial color="#626f78" metalness={.8}/></mesh></> :
+      <><mesh position={[0,height/2,0]} castShadow><boxGeometry args={[width*.94,height*.98,.055]}/><meshStandardMaterial color={doorColor} transparent={object.doorStyle==='glass'} opacity={object.doorStyle==='glass'?.48:1} metalness={object.doorStyle==='glass'?.25:0} roughness={object.doorStyle==='glass'?.16:.52}/></mesh>{object.doorStyle==='classic'&&<><mesh position={[0,height*.28,.032]}><boxGeometry args={[width*.65,height*.32,.018]}/><meshStandardMaterial color="#9a7251" roughness={.6}/></mesh><mesh position={[0,height*.72,.032]}><boxGeometry args={[width*.65,height*.32,.018]}/><meshStandardMaterial color="#9a7251" roughness={.6}/></mesh></>}{object.doorStyle==='glass'&&<mesh position={[0,height/2,.04]}><boxGeometry args={[.035,height*.9,.025]}/><meshStandardMaterial color="#e9f8fa" metalness={.5}/></mesh>}<mesh position={[width*.36,height*.48,.06]}><sphereGeometry args={[.035,16,16]}/><meshStandardMaterial color="#d5b36d" metalness={.8}/></mesh></>}
+    </> :
+    <><mesh position={[0,sill+height/2,0]}><boxGeometry args={[width,height,.09]}/><meshStandardMaterial color={frameColor} metalness={object.windowStyle==='industrial'?.65:0} roughness={.35}/></mesh><mesh position={[0,sill+height/2,.052]}><boxGeometry args={[width-.12,height-.12,.025]}/><meshStandardMaterial color="#83c6df" transparent opacity={.48} metalness={.25} roughness={.12}/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[.045,height,.04]}/><meshStandardMaterial color={frameColor}/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[width,.045,.04]}/><meshStandardMaterial color={frameColor}/></mesh>{(object.windowStyle==='french'||object.windowStyle==='industrial')&&<><mesh position={[0,sill+height/2,.085]}><boxGeometry args={[.035,height-.12,.025]}/><meshStandardMaterial color={frameColor}/></mesh>{object.windowStyle==='industrial'&&<mesh position={[0,sill+height/2,.085]}><boxGeometry args={[width-.12,.035,.025]}/><meshStandardMaterial color={frameColor}/></>}</>}</>}
   </group>;
 }
-
 function SmartDeviceModel({object}:{object:PlacedObject}) {
   const colors={switch:'#e6e9e7',socket:'#f1eee5',thermostat:'#d8e1e6',camera:'#53616c',sensor:'#d5a76a',speaker:'#303942'};
   return <group position={[object.x,.95,object.y]} rotation={[0,object.rotation||0,0]}>
@@ -95,10 +99,15 @@ function SmartDeviceModel({object}:{object:PlacedObject}) {
   </group>;
 }
 function StairModel({object}:{object:PlacedObject}) {
-  const count=object.stairType==='ladder'?9:10;
+  const count=object.stairType==='ladder'?9:object.stairType==='spiral'?12:10;
   return <group position={[object.x,0,object.y]} rotation={[0,object.rotation||0,0]}>
-    {Array.from({length:count},(_,i)=>{const turned=object.stairType==='quarter-turn'&&i>=5;const step=i%5;return <mesh key={i} position={turned?[(step-2)*.25,(i+.5)*.18,-.35]:[0,(i+.5)*.18,(i-(count-1)/2)*.25]} rotation={[0,turned?Math.PI/2:0,0]} castShadow receiveShadow><boxGeometry args={[1,.09,.28]}/><meshStandardMaterial color="#a98560" roughness={.72}/></mesh>;})}
-    {object.stairType!=='ladder'&&[-.46,.46].map(x=><mesh key={x} position={[x,.88,0]} rotation={[0,0,-.52]}><boxGeometry args={[.07,1.75,.07]}/><meshStandardMaterial color="#6e5742"/></mesh>)}
+    {Array.from({length:count},(_,i)=>{
+      const spiral=object.stairType==='spiral',u=object.stairType==='u-shaped'&&i>=5,quarter=object.stairType==='quarter-turn'&&i>=5;
+      const angle=i*.48,radius=.48,step=i%5;
+      const pos: [number,number,number]=spiral?[Math.sin(angle)*radius,(i+.5)*.18,Math.cos(angle)*radius]:u?[((step-2)*.24)+(i>=5?-.85:0),(i+.5)*.18,(i>=5?-.2:.35)]:quarter?[(step-2)*.25,(i+.5)*.18,-.35]:[0,(i+.5)*.18,(i-(count-1)/2)*.25];
+      return <mesh key={i} position={pos} rotation={[0,spiral?angle:quarter||u?Math.PI/2:0,0]} castShadow receiveShadow><boxGeometry args={[spiral?.56:object.stairType==='floating'?.82:1,.09,spiral?.24:.28]}/><meshStandardMaterial color={object.stairType==='floating'?'#d5e0e5':'#a98560'} roughness={.55}/></mesh>;
+    })}
+    {object.stairType==='spiral'?<mesh position={[0,.95,0]}><cylinderGeometry args={[.07,.09,2,20]}/><meshStandardMaterial color="#596c78" metalness={.65}/></mesh>:object.stairType!=='ladder'&&object.stairType!=='floating'&&[-.46,.46].map(x=><mesh key={x} position={[x,.88,0]} rotation={[0,0,-.52]}><boxGeometry args={[.07,1.75,.07]}/><meshStandardMaterial color="#6e5742"/></mesh>)}
   </group>;
 }
 function WallWithOpening({ room, side, openings }: { room: Room; side: WallSide; openings: PlacedObject[] }) {
