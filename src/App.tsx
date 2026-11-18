@@ -123,6 +123,17 @@ function WallWithOpening({ room, side, openings }: { room: Room; side: WallSide;
   if(cursor<length/2)parts.push({center:(cursor+length/2)/2,start:cursor,end:length/2,bottom:0,top:wallHeight,id:'wall-end'});
   return <group>{parts.map(p=><mesh key={side+p.id} position={[side==='north'||side==='south'?p.center:x,(p.bottom+p.top)/2,side==='north'||side==='south'?z:p.center]} castShadow receiveShadow><boxGeometry args={[side==='north'||side==='south'?p.end-p.start:thickness,p.top-p.bottom,side==='north'||side==='south'?thickness:p.end-p.start]}/><meshStandardMaterial color={wallColor} roughness={room.wallFinish==='wood' ? .62 : .9}/></mesh>)}</group>;
 }
+function PolygonRoomModel({room}:{room:Room}) {
+  const points=room.polygon||[];
+  const shape=useMemo(()=>{const value=new Shape();if(points.length){value.moveTo(points[0].x,-points[0].y);points.slice(1).forEach(p=>value.lineTo(p.x,-p.y));value.closePath();}return value;},[room.polygon]);
+  const floorColor=room.floorFinish==='oak'?'#b18a62':room.floorFinish==='stone'?'#a9b0b3':room.floorFinish==='tile'?'#d7e0e2':room.floorFinish==='concrete'?'#858e94':room.color;
+  const wallColor=({plaster:'#e8edf0',concrete:'#92999d',brick:'#a86f58',wood:'#a77b50'} as Record<string,string>)[room.wallFinish||'plaster'];
+  const thickness=(room.wallThicknessMm||180)/1000;
+  return <group position={[room.x,0,room.y]}>
+    <mesh rotation={[-Math.PI/2,0,0]} position={[0,.06,0]} receiveShadow><shapeGeometry args={[shape]}/><meshStandardMaterial color={floorColor} roughness={room.floorFinish==='tile'?.28:.86} side={2}/></mesh>
+    {points.map((p,i)=>{const next=points[(i+1)%points.length];const dx=next.x-p.x,dy=next.y-p.y,length=Math.hypot(dx,dy);return <mesh key={i} position={[(p.x+next.x)/2,1.35,(p.y+next.y)/2]} rotation={[0,-Math.atan2(dy,dx),0]} castShadow receiveShadow><boxGeometry args={[length,2.7,thickness]}/><meshStandardMaterial color={wallColor} roughness={room.wallFinish==='wood'?.62:.9}/></mesh>;})}
+  </group>;
+}
 function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?: PlacedObject[]; focusRoomId?: number }) {
   const visibleRooms = focusRoomId ? rooms.filter(r=>r.id===focusRoomId) : rooms;
   const focus = visibleRooms[0];
@@ -130,7 +141,7 @@ function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?
     <ambientLight intensity={1.2}/><directionalLight position={[8,14,8]} intensity={2}/><Environment preset="city"/>
     <Grid infiniteGrid sectionColor="#8b9aaa" cellColor="#45515e" fadeDistance={35}/><OrbitControls makeDefault/>
     <mesh rotation={[-Math.PI/2,0,0]} position={[5,0,5]}><planeGeometry args={[16,16]}/><meshStandardMaterial color="#303a43"/></mesh>
-    {visibleRooms.map(r => <group key={r.id} position={[r.x+r.w/2,0.06,r.y+r.h/2]}>
+    {visibleRooms.map(r => r.polygon?.length ? <PolygonRoomModel key={r.id} room={r}/> : <group key={r.id} position={[r.x+r.w/2,0.06,r.y+r.h/2]}>
       <mesh><boxGeometry args={[r.w,.12,r.h]}/><meshStandardMaterial color={r.floorFinish==='oak' ? '#b18a62' : r.floorFinish==='stone' ? '#a9b0b3' : r.floorFinish==='tile' ? '#d7e0e2' : r.floorFinish==='concrete' ? '#858e94' : r.color} roughness={r.floorFinish==='tile' ? .28 : .86}/></mesh>
       {(['north','south','west','east'] as WallSide[]).map(side=><WallWithOpening key={side} room={r} side={side} openings={objects.filter(o=>(o.kind==='door'||o.kind==='window')&&(o.roomIds?o.roomIds.includes(r.id):o.x>=r.x-.01)&&((o.wallByRoom?.[r.id]||o.wall)===side)&&o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01)}/>)}
     </group>)}
