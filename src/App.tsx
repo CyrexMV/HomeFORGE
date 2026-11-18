@@ -151,7 +151,7 @@ export default function App() {
       if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='z'){event.preventDefault();if(event.shiftKey)redo();else undo();return;}
       if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='y'){event.preventDefault();redo();return;}
       if((event.key==='Delete'||event.key==='Backspace')&&selectedObjectId!==null){event.preventDefault();setObjects(os=>os.filter(o=>o.id!==selectedObjectId));setSelectedObjectId(null);setNotice('Objekt gelöscht.');}
-      if(event.key==='Escape'){setObjectDrag(null);setDrag(null);setSelectedObjectId(null);setTool('select');}
+      if(event.key==='Escape'){setObjectDrag(null);setDrag(null);setSelectedObjectId(null);setMeasurePoints([]);setTool('select');}
       if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='d'){event.preventDefault();duplicateSelected();}
     };
     window.addEventListener('keydown',onKeyDown);return()=>window.removeEventListener('keydown',onKeyDown);
