@@ -209,7 +209,7 @@ export default function App() {
         const side=candidates[0];const w=kind==='door'?900:1200;
         if(!side||side.d>.75){setNotice('Keine passende Wand in der Nähe. Platziere die Öffnung direkt auf einer Wand.');return;}
         const mm=Math.max(w/2,Math.min(side.len-w/2,Math.round(side.offset)));
-        const paired=candidates.filter(c=>c.room.id!==side.room.id&&Math.abs(c.coordinate-side.coordinate)<.18&&Math.min(c.axisEnd,side.axisEnd)-Math.max(c.axisStart,side.axisStart)>.2&&Math.abs((c.axisStart+mm/1000)-(side.axisStart+mm/1000))<.18);
+        const paired=candidates.filter(c=>c.room.id!==side.room.id&&Math.abs(c.coordinate-side.coordinate)<.18&&Math.min(c.axisEnd,side.axisEnd)-Math.max(c.axisStart,side.axisStart)>.2&&Math.abs(c.offset-(side.axisStart+mm/1000-c.axisStart)*1000)<Math.max(200,w/2));
         const roomIds=[side.room.id,...paired.map(c=>c.room.id)];
         const wallByRoom:Record<number,WallSide>={[side.room.id]:side.wall};
         const offsetByRoom:Record<number,number>={[side.room.id]:mm};
