@@ -9,7 +9,7 @@ type FurnitureModelId = 'sofa'|'armchair'|'bed'|'dining-table'|'dining-chair'|'c
 type WallSide = 'north'|'south'|'east'|'west';
 type SmartDeviceId = 'switch'|'socket'|'thermostat'|'camera'|'sensor'|'speaker';
 type StairModelId = 'straight'|'quarter-turn'|'ladder';
-type PlacedObject = { id: number; kind: 'door' | 'window' | 'furniture' | 'light' | 'smart' | 'stair'; device?: SmartDeviceId; stairType?: StairModelId; roomIds?: number[]; wallByRoom?: Record<number,WallSide>; x: number; y: number; name: string; model?: FurnitureModelId; rotation?: number; wall?: WallSide; offsetMm?: number; widthMm?: number; heightMm?: number; sillMm?: number };
+type PlacedObject = { id: number; kind: 'door' | 'window' | 'furniture' | 'light' | 'smart' | 'stair'; device?: SmartDeviceId; stairType?: StairModelId; roomIds?: number[]; wallByRoom?: Record<number,WallSide>; offsetByRoom?: Record<number,number>; x: number; y: number; name: string; model?: FurnitureModelId; rotation?: number; wall?: WallSide; offsetMm?: number; widthMm?: number; heightMm?: number; sillMm?: number };
 type Project = { rooms: Room[]; objects: PlacedObject[]; floor: string };
 const initial: Room[] = [
   { id: 1, name: 'Wohnzimmer', x: 1, y: 1, w: 5.2, h: 4.2, color: '#d8c7a5' },
@@ -84,7 +84,7 @@ function WallWithOpening({ room, side, openings }: { room: Room; side: WallSide;
   const z=side==='north'?-room.h/2:side==='south'?room.h/2:0;
   const x=side==='west'?-room.w/2:side==='east'?room.w/2:0;
   const parts: {center:number;start:number;end:number;bottom:number;top:number;id:string}[]=[];
-  const cuts=openings.map(o=>{const center=(o.offsetMm||0)/1000-length/2;const width=(o.widthMm||900)/1000;const bottom=o.kind==='window'?(o.sillMm??900)/1000:0;const top=Math.min(wallHeight,(o.kind==='door'?(o.heightMm||2100):(o.sillMm??900)+(o.heightMm||1200))/1000);return {start:Math.max(-length/2,center-width/2),end:Math.min(length/2,center+width/2),bottom,top,id:String(o.id)};}).filter(c=>c.end>c.start);
+  const cuts=openings.map(o=>{const center=((o.offsetByRoom?.[room.id]??o.offsetMm)||0)/1000-length/2;const width=(o.widthMm||900)/1000;const bottom=o.kind==='window'?(o.sillMm??900)/1000:0;const top=Math.min(wallHeight,(o.kind==='door'?(o.heightMm||2100):(o.sillMm??900)+(o.heightMm||1200))/1000);return {start:Math.max(-length/2,center-width/2),end:Math.min(length/2,center+width/2),bottom,top,id:String(o.id)};}).filter(c=>c.end>c.start);
   let cursor=-length/2;
   cuts.sort((a,b)=>a.start-b.start).forEach(c=>{if(c.start>cursor)parts.push({center:(cursor+c.start)/2,start:cursor,end:c.start,bottom:0,top:wallHeight,id:'wall-'+cursor});if(c.bottom>0)parts.push({center:(c.start+c.end)/2,start:c.start,end:c.end,bottom:0,top:c.bottom,id:c.id+'-sill'});if(c.top<wallHeight)parts.push({center:(c.start+c.end)/2,start:c.start,end:c.end,bottom:c.top,top:wallHeight,id:c.id+'-lintel'});cursor=Math.max(cursor,c.end);});
   if(cursor<length/2)parts.push({center:(cursor+length/2)/2,start:cursor,end:length/2,bottom:0,top:wallHeight,id:'wall-end'});
@@ -101,7 +101,7 @@ function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?
       <mesh><boxGeometry args={[r.w,.12,r.h]}/><meshStandardMaterial color={r.color}/></mesh>
       {(['north','south','west','east'] as WallSide[]).map(side=><WallWithOpening key={side} room={r} side={side} openings={objects.filter(o=>(o.kind==='door'||o.kind==='window')&&(o.roomIds?o.roomIds.includes(r.id):o.x>=r.x-.01)&&((o.wallByRoom?.[r.id]||o.wall)===side)&&o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01)}/>)}
     </group>)}
-    {visibleRooms.flatMap(r=>objects.filter(o=>o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01).map(o=>o.kind==='furniture'?<FurnitureModel key={o.id} object={o}/>:o.kind==='door'||o.kind==='window'?<WallOpeningModel key={o.id} object={o}/>:o.kind==='stair'?<StairModel key={o.id} object={o}/>:o.kind==='smart'?<SmartDeviceModel key={o.id} object={o}/>:<group key={o.id} position={[o.x,0,o.y]}><mesh position={[0,.35,0]}><boxGeometry args={[.7,.45,.12]}/><meshStandardMaterial color="#f2d27c"/></mesh></group>))}
+    {objects.filter(o=>visibleRooms.some(r=>o.roomIds?.includes(r.id)||(o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01))).map(o=>o.kind==='furniture'?<FurnitureModel key={o.id} object={o}/>:o.kind==='door'||o.kind==='window'?<WallOpeningModel key={o.id} object={o}/>:o.kind==='stair'?<StairModel key={o.id} object={o}/>:o.kind==='smart'?<SmartDeviceModel key={o.id} object={o}/>:<group key={o.id} position={[o.x,0,o.y]}><mesh position={[0,.35,0]}><boxGeometry args={[.7,.45,.12]}/><meshStandardMaterial color="#f2d27c"/></mesh></group>)}
   </Canvas>;
 }
 export default function App() {
@@ -209,11 +209,12 @@ export default function App() {
         const side=candidates[0];const w=kind==='door'?900:1200;
         if(!side||side.d>.75){setNotice('Keine passende Wand in der Nähe. Platziere die Öffnung direkt auf einer Wand.');return;}
         const mm=Math.max(w/2,Math.min(side.len-w/2,Math.round(side.offset)));
-        const paired=candidates.filter(c=>c.room.id!==side.room.id&&Math.abs(c.coordinate-side.coordinate)<.18&&Math.min(c.axisEnd,side.axisEnd)-Math.max(c.axisStart,side.axisStart)>.2&&Math.abs(c.offset-mm)<Math.max(200,w/2));
+        const paired=candidates.filter(c=>c.room.id!==side.room.id&&Math.abs(c.coordinate-side.coordinate)<.18&&Math.min(c.axisEnd,side.axisEnd)-Math.max(c.axisStart,side.axisStart)>.2&&Math.abs((c.axisStart+mm/1000)-(side.axisStart+mm/1000))<.18);
         const roomIds=[side.room.id,...paired.map(c=>c.room.id)];
         const wallByRoom:Record<number,WallSide>={[side.room.id]:side.wall};
-        paired.forEach(c=>wallByRoom[c.room.id]=c.wall);
-        const obj={id:Date.now(),kind,x:side.wall==='west'?side.room.x:side.wall==='east'?side.room.x+side.room.w:side.room.x+mm/1000,y:side.wall==='north'?side.room.y:side.wall==='south'?side.room.y+side.room.h:side.room.y+mm/1000,name:names[kind],wall:side.wall,offsetMm:mm,widthMm:w,heightMm:kind==='door'?2100:1200,sillMm:kind==='window'?900:0,roomIds,wallByRoom};
+        const offsetByRoom:Record<number,number>={[side.room.id]:mm};
+        paired.forEach(c=>{wallByRoom[c.room.id]=c.wall;offsetByRoom[c.room.id]=Math.round((side.axisStart+mm/1000-c.axisStart)*1000);});
+        const obj={id:Date.now(),kind,x:side.wall==='west'?side.room.x:side.wall==='east'?side.room.x+side.room.w:side.room.x+mm/1000,y:side.wall==='north'?side.room.y:side.wall==='south'?side.room.y+side.room.h:side.room.y+mm/1000,name:names[kind],wall:side.wall,offsetMm:mm,widthMm:w,heightMm:kind==='door'?2100:1200,sillMm:kind==='window'?900:0,roomIds,wallByRoom,offsetByRoom};
         setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice(paired.length?'Tür verbindet '+side.room.name+' und '+paired[0].room.name+'.':'Öffnung in '+side.room.name+' platziert.');
       }
       else{const obj={id:Date.now(),kind,x:snapValue(p.x),y:snapValue(p.y),name:kind==='furniture'?catalog[selectedFurniture]:kind==='smart'?'Smart-Home-Gerät':kind==='stair'?'Treppe':names[kind],model:kind==='furniture'?selectedFurniture:undefined,device:kind==='smart'?selectedDevice:undefined,stairType:kind==='stair'?selectedStair:undefined};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice((kind==='furniture'?catalog[selectedFurniture]:names[kind])+' platziert.');}
