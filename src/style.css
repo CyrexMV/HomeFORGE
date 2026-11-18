@@ -43,3 +43,14 @@
 .placedObject.selectedPlaced{box-shadow:0 0 0 2px #111820,0 0 0 5px #e9bd86,0 5px 18px #0008}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #e9bd86;outline-offset:2px}
 @media(pointer:coarse){.placedObject{width:38px;height:38px;font-size:19px}.canvasTools button{min-width:38px;min-height:38px}}
+
+
+/* Professional CAD tools: dimension labels, measurement overlay and precision grid */
+.roomDim{position:absolute;display:block;color:#f3f5f6;font-size:10px;font-weight:700;letter-spacing:.02em;text-shadow:0 1px 3px #000,0 0 5px #000;pointer-events:none;white-space:nowrap}
+.roomDimTop{top:-19px;left:50%;transform:translateX(-50%)}
+.roomDimSide{right:-29px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl}
+.measureOverlay{position:absolute;inset:0;width:100%;height:100%;z-index:10;overflow:visible;pointer-events:none}
+.measureOverlay text{font-weight:800;paint-order:stroke;stroke:#17212b;stroke-width:4px;stroke-linejoin:round}
+.gridSelect{height:30px;max-width:72px;border:1px solid #394650;border-radius:6px;background:#171d24;color:#cbd5dd;padding:0 5px;font-size:10px;outline:none}
+.gridSelect:focus-visible{outline:2px solid #e9bd86;outline-offset:2px}
+@media(pointer:coarse){.gridSelect{height:38px;min-width:66px}}
