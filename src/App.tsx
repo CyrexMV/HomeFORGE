@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { Shape } from 'three';
 import { OrbitControls, Grid, Environment } from '@react-three/drei';
 
-type Room = { id: number; name: string; x: number; y: number; w: number; h: number; color: string };
+type Room = { id: number; name: string; x: number; y: number; w: number; h: number; color: string; polygon?: {x:number;y:number}[] };
 type PlacedObject = { id: number; kind: 'door' | 'window' | 'furniture' | 'light'; x: number; y: number; name: string };
 type Project = { rooms: Room[]; objects: PlacedObject[]; floor: string };
 const initial: Room[] = [
