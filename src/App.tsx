@@ -41,7 +41,8 @@ export default function App() {
   const [active,setActive] = useState(1);
   const [tool,setTool] = useState('select');
   const [view,setView] = useState<'2d'|'3d'>('2d');
-  const [zoom,setZoom] = useState(1);\n  const [pinchStart,setPinchStart] = useState<{distance:number;zoom:number}|null>(null);
+  const [zoom,setZoom] = useState(1);
+  const [pinchStart,setPinchStart] = useState<{distance:number;zoom:number}|null>(null);
   const [floor,setFloor] = useState('Erdgeschoss');
   const [showLeft,setShowLeft] = useState(true);
   const [showRight,setShowRight] = useState(true);
