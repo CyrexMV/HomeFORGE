@@ -251,3 +251,35 @@ button:active{transform:translateY(1px)}
 .psBoundary.drawing{stroke-dasharray:.25 .14}.psProjectName{line-height:1.2}.psContextRight .psExportButton{cursor:pointer}.psMode,.psToggle,.psActionButton,.psApplyButton,.psCanvasTool,.psZoom button,.psPhase,.psBackButton,.psIconButton{cursor:pointer}.psCanvasSurface{isolation:isolate}.psBoundary,.psBoundaryLine,.psSetback{vector-effect:non-scaling-stroke}
 .psSelectedEdge{stroke:#f09a3e;stroke-width:.13;stroke-linecap:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 2px #efa54d80)}
 
+
+/* Studio theme overrides, loaded after all legacy rules. */
+/* Applies after the legacy editor stylesheet so every planning stage shares one studio theme. */
+:root{color-scheme:light;font-family:Inter,"Segoe UI",Arial,sans-serif;color:#20313d;background:#eef2f4}
+body{background:#eef2f4;color:#20313d}
+button,input,select{font-family:inherit}
+.app{background:#eef2f4;color:#20313d}
+.top{background:#fff;color:#263b48;border-bottom:1px solid #dce4e8;box-shadow:none;backdrop-filter:none}
+.brand .brandIcon{background:#183b52!important;color:#fff;box-shadow:0 2px 8px #183b5220}
+.brand b{color:#203744}.brand small{color:#8d9ca4}.project{color:#344b58}.project .saved{color:#8999a2}
+.topActions .iconBtn{border-color:#dce4e8;background:#fff;color:#536a76}.topActions .share{background:#286bd0;color:#fff;border-color:#286bd0}
+.workflowNav{background:#fff;border-bottom:1px solid #dce4e8;box-shadow:none}
+.workflowNav button{color:#71838d}.workflowNav button b{border-color:#dbe3e7;color:#81919a}
+.workflowNav button.active{color:#2868c5;border-color:#2868c5}.workflowNav button.active b{background:#eaf2ff;border-color:#d4e4fb;color:#2768c5}
+.workspace,.main{background:#eef2f4}.left,.right{background:#fff;border-color:#dce4e8;color:#263b48}
+.sideHead{border-color:#edf1f3;color:#80919a}.sideHead span,.inspector>label,.inspector label{color:#82939d}.sideHead button{color:#758893}
+.tool{color:#566a75}.tool:hover,.category:hover,.floor:hover{background:#f4f7f8;color:#2d5266}.tool.chosen{background:#eef4fc;color:#2868c5;border-left-color:#2868c5}
+.sideDivider{background:#edf1f3}.category,.floor{border-color:#edf1f3;color:#566b77}.floor.activeFloor{background:#edf4fd;color:#2868c5;border-color:#d7e5f7}
+.furnitureCatalog{background:#f8fafb;border-color:#e4eaed}.furnitureCatalog button{background:#fff;color:#586e79;border:1px solid #edf1f3}.furnitureCatalog button:hover,.furnitureCatalog button.selectedFurniture{background:#edf4fd;border-color:#bdd2ef;color:#2868c5}
+.canvasHead{background:#fff;border-color:#dce4e8;color:#324b59}.crumb span{color:#93a1a8}.crumb strong{color:#3e5a68}
+.viewSwitch{background:#f1f4f6;border-color:#e2e8eb}.viewSwitch button{color:#74858e}.viewSwitch button.on{background:#fff;color:#2868c5;box-shadow:0 1px 3px #21384317}
+.canvasTools{background:#f7f9fa;border-color:#e1e7ea}.canvasTools button{color:#647b88}.canvasTools button.snapActive{color:#2868c5;background:#e8f1fd}.canvasTools i{background:#dfe6e9}.canvasTools>span{color:#71848e}.gridSelect,.canvasTools select{border-color:#dae3e7;background:#fff;color:#4d6471}
+.canvasArea{background:#edf2f4}.planViewport{background-color:#edf2f4!important;background-image:radial-gradient(#c8d3d9 .7px,transparent .7px)!important;background-size:15px 15px!important}.plan{box-shadow:0 12px 34px #233c4b20;border:1px solid #d1dce2}.dimension{color:#607885}
+.canvasFooter{background:#fff;border-color:#dce4e8;color:#6f828d}.canvasFooter svg{color:#627e8b}.bottomBar{background:#fff;border-color:#dce4e8;color:#657b87}.bottomBar button{border-color:#dce4e8;background:#fff;color:#637984}.bottomBar>span{color:#80909a}.bottomBar>span b{color:#46606e}
+.inspector{color:#415763}.inspector h3{color:#2b4351}.inspector p,.inspector small{color:#84939a}.field input,.field select,.openingInspector select{border-color:#dce4e8;background:#fff;color:#314b59}.field input:focus{border-color:#6e9bd8}
+.areaCard{border-color:#dce8f3;background:#f0f6fc}.areaCard span{color:#718898}.areaCard b{color:#285f9f}.stat{border-color:#edf1f3;color:#71848e}.stat b{color:#364f5d}.quick{border-color:#dce4e8;background:#f8fafb;color:#516875}.quick:hover{background:#eef4fa}.delete{color:#a56762}
+.polygonVertexList button{border-color:#e7ecef;background:#fff;color:#526a76}.polygonVertexList button:hover,.polygonVertexList button.selectedFurniture{border-color:#bfd4ee;background:#f0f6fd;color:#2868c5}
+.projectWelcome{background:radial-gradient(ellipse at 14% 12%,#dceafa 0,transparent 38%),linear-gradient(135deg,#f3f6f8,#e8eef2);color:#253d4b}.projectWelcome .welcomeGlow{opacity:.25;background:radial-gradient(circle,#9ec4e8 0,transparent 66%)}
+.welcomeCard{background:#fff;border:1px solid #dce5ea;border-radius:18px;box-shadow:0 22px 70px #183b5218}.welcomeBrand b{color:#203c4d}.welcomeBrand small{color:#82939c}.welcomeEyebrow{color:#3170c5}.welcomeCard h1{color:#203c4d}.welcomeCard h1 em{color:#3477cb}.welcomeCard p{color:#71838d}.welcomeCard label{color:#81919a}.welcomeCard input{border-color:#dce5e9;background:#f9fbfc;color:#334b59}.welcomePrimary{background:#286bd0;color:#fff;box-shadow:0 5px 14px #286bd025}.welcomeSecondary{border-color:#dbe4e8;background:#fff;color:#49616f}.welcomeSteps{border-color:#e8edef;color:#72848e}.welcomeSteps b{color:#2868c5}.welcomeFoot{color:#87969e}
+.psMeasure{font-size:.42px}.psPointLabel{font-size:.42px}.psAxisLabel{font-size:.35px}.psSetback{fill:#4eaaa21c;stroke:#168b83;stroke-width:.11px}.psBoundary{stroke-width:.1px}.psBoundaryLine{stroke-width:.1px}.psSelectedEdge{stroke:#f09a3e;stroke-width:2px;stroke-linecap:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 2px #efa54d80)}
+@media(max-width:900px){.project .saved{display:none}.workflowNav button span{font-size:9px}.left,.right{background:#fff}}
+@media(max-width:650px){.top,.canvasHead,.bottomBar{background:#fff}.left,.right{background:#fff;box-shadow:0 8px 30px #21384320}}
