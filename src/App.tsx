@@ -217,7 +217,7 @@ export default function App() {
         const obj={id:Date.now(),kind,x:side.wall==='west'?side.room.x:side.wall==='east'?side.room.x+side.room.w:side.room.x+mm/1000,y:side.wall==='north'?side.room.y:side.wall==='south'?side.room.y+side.room.h:side.room.y+mm/1000,name:names[kind],wall:side.wall,offsetMm:mm,widthMm:w,heightMm:kind==='door'?2100:1200,sillMm:kind==='window'?900:0,roomIds,wallByRoom,offsetByRoom};
         setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice(paired.length?'Tür verbindet '+side.room.name+' und '+paired[0].room.name+'.':'Öffnung in '+side.room.name+' platziert.');
       }
-      else{const obj={id:Date.now(),kind,x:snapValue(p.x),y:snapValue(p.y),name:kind==='furniture'?catalog[selectedFurniture]:kind==='smart'?'Smart-Home-Gerät':kind==='stair'?'Treppe':names[kind],model:kind==='furniture'?selectedFurniture:undefined,device:kind==='smart'?selectedDevice:undefined,stairType:kind==='stair'?selectedStair:undefined};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice((kind==='furniture'?catalog[selectedFurniture]:names[kind])+' platziert.');}
+      else{const displayName=kind==='furniture'?catalog[selectedFurniture]:kind==='smart'?'Smart-Home-Gerät':kind==='stair'?'Treppe':names[kind as 'door'|'window'|'light'];const obj={id:Date.now(),kind,x:snapValue(p.x),y:snapValue(p.y),name:displayName,model:kind==='furniture'?selectedFurniture:undefined,device:kind==='smart'?selectedDevice:undefined,stairType:kind==='stair'?selectedStair:undefined};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice(displayName+' platziert.');}
     }
   };
   const onPlanDown = (e: React.PointerEvent<HTMLDivElement>) => {
