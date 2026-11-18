@@ -6,10 +6,10 @@ import type { ToolMode, Vec2 } from '../engine/model';
 
 type Props={onNavigate:(stage:'draw'|'design'|'furnish'|'electrical')=>void};
 
-export function ThemeToggle({plot=false}:{plot?:boolean}){
+export function ThemeToggle({plot=false,welcome=false}:{plot?:boolean;welcome?:boolean}){
   const [dark,setDark]=useState(()=>{let saved=false;try{saved=localStorage.getItem('homeforge-theme')==='dark';}catch{}if(typeof document!=='undefined')document.documentElement.dataset.theme=saved?'dark':'light';return saved;});
   useEffect(()=>{document.documentElement.dataset.theme=dark?'dark':'light';try{localStorage.setItem('homeforge-theme',dark?'dark':'light');}catch{}},[dark]);
-  return <button type="button" className={plot?'psIconButton themeToggle':'iconBtn themeToggle'} aria-label={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} aria-pressed={dark} title={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} onClick={()=>setDark(value=>!value)}>{dark?<Sun size={16}/>:<Moon size={16}/>}</button>;
+  return <button type="button" className={plot?'psIconButton themeToggle':`iconBtn themeToggle${welcome?' welcomeThemeToggle':''}`} aria-label={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} aria-pressed={dark} title={dark?'Helles Design aktivieren':'Dunkles Design aktivieren'} onClick={()=>setDark(value=>!value)}>{dark?<Sun size={16}/>:<Moon size={16}/>}</button>;
 }
 const VIEW_W=32,VIEW_H=24,CENTER_X=12.5,CENTER_Y=10,EDGE_SNAP_M=.32;
 const modes:{id:ToolMode;label:string;icon:typeof Crosshair;hint:string}[]=[
