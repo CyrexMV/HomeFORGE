@@ -17,3 +17,11 @@
 /* Isolated room editing mode */
 .roomInterior{position:relative}.roomModeBar{position:absolute;z-index:5;top:14px;left:14px;right:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border:1px solid #46515c;border-radius:12px;background:#151c24ed;backdrop-filter:blur(12px);color:#e8edf0}.roomModeBar>div{display:flex;flex-direction:column;gap:3px}.roomModeBar b{font-size:10px;letter-spacing:.12em;color:#d5a76a}.roomModeBar span{font-size:14px;font-weight:650}.roomModeBar button{display:flex;align-items:center;gap:7px;border:0;border-radius:8px;padding:10px 13px;background:#d5a76a;color:#1b2024;font-size:12px;font-weight:700}.enterRoom{width:100%;margin:12px 0 8px}.drawControls{position:absolute;z-index:6;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #46515c;border-radius:10px;background:#151c24ed;color:#e8edf0}.drawControls button{border:1px solid #46515c;border-radius:7px;padding:7px 10px;background:#29333d;color:#e8edf0;font-size:11px}.drawControls button:disabled{opacity:.35}.drawControls button:last-child:not(:disabled){background:#d5a76a;color:#1b2024;border-color:#d5a76a}
 @media(max-width:650px){.roomModeBar{top:8px;left:8px;right:8px;padding:8px}.roomModeBar button{padding:8px;font-size:10px}.drawControls{left:8px;right:8px;transform:none;justify-content:center;gap:5px}.drawControls button{padding:6px;font-size:10px}}
+
+
+/* Realistic furniture model catalog */
+.furnitureCatalog{margin:8px 10px 14px;padding:10px;background:#11171d;border:1px solid #303b45;border-radius:8px;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.furnitureCatalog small{grid-column:1/-1;color:#d5a76a;font-size:8px;letter-spacing:1px;font-weight:800;padding:2px 2px 6px}
+.furnitureCatalog button{min-width:0;border:1px solid transparent;border-radius:5px;background:#202831;color:#aebac4;padding:8px 5px;text-align:left;font-size:9px;white-space:normal}
+.furnitureCatalog button:hover,.furnitureCatalog button.selectedFurniture{border-color:#c99d66;background:#34302a;color:#f0c38d}
+.delete:disabled{opacity:.35;cursor:not-allowed}
