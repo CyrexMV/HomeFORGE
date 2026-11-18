@@ -7,7 +7,9 @@ import { OrbitControls, Grid, Environment } from '@react-three/drei';
 type Room = { id: number; name: string; x: number; y: number; w: number; h: number; color: string; polygon?: {x:number;y:number}[] };
 type FurnitureModelId = 'sofa'|'armchair'|'bed'|'dining-table'|'dining-chair'|'coffee-table'|'wardrobe'|'desk'|'bookshelf'|'fridge'|'kitchen-unit'|'toilet'|'bathtub'|'washbasin'|'floor-lamp'|'plant';
 type WallSide = 'north'|'south'|'east'|'west';
-type PlacedObject = { id: number; kind: 'door' | 'window' | 'furniture' | 'light'; x: number; y: number; name: string; model?: FurnitureModelId; rotation?: number; wall?: WallSide; offsetMm?: number; widthMm?: number; heightMm?: number; sillMm?: number };
+type SmartDeviceId = 'switch'|'socket'|'thermostat'|'camera'|'sensor'|'speaker';
+type StairModelId = 'straight'|'quarter-turn'|'ladder';
+type PlacedObject = { id: number; kind: 'door' | 'window' | 'furniture' | 'light' | 'smart' | 'stair'; device?: SmartDeviceId; stairType?: StairModelId; roomIds?: number[]; wallByRoom?: Record<number,WallSide>; x: number; y: number; name: string; model?: FurnitureModelId; rotation?: number; wall?: WallSide; offsetMm?: number; widthMm?: number; heightMm?: number; sillMm?: number };
 type Project = { rooms: Room[]; objects: PlacedObject[]; floor: string };
 const initial: Room[] = [
   { id: 1, name: 'Wohnzimmer', x: 1, y: 1, w: 5.2, h: 4.2, color: '#d8c7a5' },
@@ -23,7 +25,9 @@ const tools = [
   { id: 'door', label: 'Tür platzieren', icon: DoorOpen },
   { id: 'window', label: 'Fenster platzieren', icon: PanelsTopLeft },
   { id: 'furniture', label: 'Möbel platzieren', icon: Armchair },
-  { id: 'light', label: 'Licht platzieren', icon: Lightbulb }
+  { id: 'light', label: 'Licht platzieren', icon: Lightbulb },
+  { id: 'smart', label: 'Smart Home', icon: Lightbulb },
+  { id: 'stair', label: 'Treppe platzieren', icon: Layers }
 ] as const;
 function FurnitureModel({ object }: { object: PlacedObject }) {
   const wood = '#9b704b', darkWood = '#60432f', fabric = '#9aa9b5', fabricLight = '#c4cdd2', metal = '#414b53', white = '#e9e8e2';
@@ -57,6 +61,23 @@ function WallOpeningModel({ object }: { object: PlacedObject }) {
     <><mesh position={[0,sill+height/2,0]}><boxGeometry args={[width,height,.09]}/><meshStandardMaterial color="#e7e9e8"/></mesh><mesh position={[0,sill+height/2,.052]}><boxGeometry args={[width-.12,height-.12,.025]}/><meshStandardMaterial color="#83c6df" transparent opacity={.58} metalness={.2} roughness={.12}/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[.045,height,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh><mesh position={[0,sill+height/2,.07]}><boxGeometry args={[width,.045,.04]}/><meshStandardMaterial color="#f2f3ef"/></mesh></>}
   </group>;
 }
+
+function SmartDeviceModel({object}:{object:PlacedObject}) {
+  const colors={switch:'#e6e9e7',socket:'#f1eee5',thermostat:'#d8e1e6',camera:'#53616c',sensor:'#d5a76a',speaker:'#303942'};
+  return <group position={[object.x,.95,object.y]} rotation={[0,object.rotation||0,0]}>
+    <mesh castShadow><boxGeometry args={[object.device==='speaker'?.22:.14,object.device==='speaker'?.32:.08,.055]}/><meshStandardMaterial color={colors[object.device||'switch']} roughness={.42}/></mesh>
+    {object.device==='camera'&&<mesh position={[0,0,.04]}><cylinderGeometry args={[.035,.035,.035,20]}/><meshStandardMaterial color="#111820"/></mesh>}
+    {object.device==='thermostat'&&<mesh position={[0,0,.031]}><circleGeometry args={[.035,24]}/><meshStandardMaterial color="#6eb5d0" emissive="#23566b"/></mesh>}
+    {object.device==='speaker'&&<mesh position={[0,0,.031]}><circleGeometry args={[.065,24]}/><meshStandardMaterial color="#89949c"/></mesh>}
+  </group>;
+}
+function StairModel({object}:{object:PlacedObject}) {
+  const count=object.stairType==='ladder'?9:10;
+  return <group position={[object.x,0,object.y]} rotation={[0,object.rotation||0,0]}>
+    {Array.from({length:count},(_,i)=><mesh key={i} position={[0,(i+.5)*.18,(i-(count-1)/2)*.25]} castShadow receiveShadow><boxGeometry args={[1,.09,.28]}/><meshStandardMaterial color="#a98560" roughness={.72}/></mesh>)}
+    {object.stairType!=='ladder'&&[-.46,.46].map(x=><mesh key={x} position={[x,.88,0]} rotation={[0,0,-.52]}><boxGeometry args={[.07,1.75,.07]}/><meshStandardMaterial color="#6e5742"/></mesh>)}
+  </group>;
+}
 function WallWithOpening({ room, side, openings }: { room: Room; side: WallSide; openings: PlacedObject[] }) {
   const length=(side==='north'||side==='south'?room.w:room.h);
   const wallHeight=2.7, thickness=.18;
@@ -78,9 +99,9 @@ function House3D({ rooms, objects = [], focusRoomId }: { rooms: Room[]; objects?
     <mesh rotation={[-Math.PI/2,0,0]} position={[5,0,5]}><planeGeometry args={[16,16]}/><meshStandardMaterial color="#303a43"/></mesh>
     {visibleRooms.map(r => <group key={r.id} position={[r.x+r.w/2,0.06,r.y+r.h/2]}>
       <mesh><boxGeometry args={[r.w,.12,r.h]}/><meshStandardMaterial color={r.color}/></mesh>
-      {(['north','south','west','east'] as WallSide[]).map(side=><WallWithOpening key={side} room={r} side={side} openings={objects.filter(o=>(o.kind==='door'||o.kind==='window')&&o.wall===side&&o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01)}/>)}
+      {(['north','south','west','east'] as WallSide[]).map(side=><WallWithOpening key={side} room={r} side={side} openings={objects.filter(o=>(o.kind==='door'||o.kind==='window')&&(o.roomIds?o.roomIds.includes(r.id):o.x>=r.x-.01)&&((o.wallByRoom?.[r.id]||o.wall)===side)&&o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01)}/>)}
     </group>)}
-    {visibleRooms.flatMap(r=>objects.filter(o=>o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01).map(o=>o.kind==='furniture'?<FurnitureModel key={o.id} object={o}/>:o.kind==='door'||o.kind==='window'?<WallOpeningModel key={o.id} object={o}/>:<group key={o.id} position={[o.x,0,o.y]}><mesh position={[0,.35,0]}><boxGeometry args={[.7,.45,.12]}/><meshStandardMaterial color="#f2d27c"/></mesh></group>))}
+    {visibleRooms.flatMap(r=>objects.filter(o=>o.x>=r.x-.01&&o.x<=r.x+r.w+.01&&o.y>=r.y-.01&&o.y<=r.y+r.h+.01).map(o=>o.kind==='furniture'?<FurnitureModel key={o.id} object={o}/>:o.kind==='door'||o.kind==='window'?<WallOpeningModel key={o.id} object={o}/>:o.kind==='stair'?<StairModel key={o.id} object={o}/>:o.kind==='smart'?<SmartDeviceModel key={o.id} object={o}/>:<group key={o.id} position={[o.x,0,o.y]}><mesh position={[0,.35,0]}><boxGeometry args={[.7,.45,.12]}/><meshStandardMaterial color="#f2d27c"/></mesh></group>))}
   </Canvas>;
 }
 export default function App() {
@@ -97,6 +118,8 @@ export default function App() {
   const [pinchStart,setPinchStart] = useState<{distance:number;zoom:number}|null>(null);
   const [floor,setFloor] = useState('Erdgeschoss');
   const [selectedFurniture,setSelectedFurniture] = useState<FurnitureModelId>('sofa');
+  const [selectedDevice,setSelectedDevice] = useState<SmartDeviceId>('switch');
+  const [selectedStair,setSelectedStair] = useState<StairModelId>('straight');
   const [selectedObjectId,setSelectedObjectId] = useState<number|null>(null);
   const [showLeft,setShowLeft] = useState(true);
   const [showRight,setShowRight] = useState(true);
@@ -174,10 +197,26 @@ export default function App() {
   const placeAt = (p:{x:number;y:number}) => {
     if(tool==='measure'){const pnt={x:snapValue(p.x),y:snapValue(p.y)};setMeasurePoints(ps=>ps.length>=2?[pnt]:[...ps,pnt]);setNotice(measurePoints.length===0?'Messung: Startpunkt gesetzt.':'Messung abgeschlossen.');return;}
     if(tool==='room'){setDrawPoints(ps=>{const next=[...ps,p];setNotice(next.length+' Wandpunkte gesetzt.');return next;});return;}
-    if(['door','window','furniture','light'].includes(tool)){
+    if(['door','window','furniture','light','smart','stair'].includes(tool)){
       const kind=tool as PlacedObject['kind'];const names={door:'Tür',window:'Fenster',furniture:'Möbel',light:'Licht'};const catalog:Record<FurnitureModelId,string>={sofa:'Sofa',armchair:'Sessel',bed:'Doppelbett','dining-table':'Esstisch','dining-chair':'Esszimmerstuhl','coffee-table':'Couchtisch',wardrobe:'Kleiderschrank',desk:'Schreibtisch',bookshelf:'Bücherregal',fridge:'Kühlschrank','kitchen-unit':'Küchenzeile',toilet:'Toilette',bathtub:'Badewanne',washbasin:'Waschbecken','floor-lamp':'Stehlampe',plant:'Zimmerpflanze'};
-      if((kind==='door'||kind==='window')&&room){const sides=[{wall:'north' as WallSide,d:Math.abs(p.y-room.y),offset:(p.x-room.x)*1000,len:room.w*1000},{wall:'south' as WallSide,d:Math.abs(p.y-room.y-room.h),offset:(p.x-room.x)*1000,len:room.w*1000},{wall:'west' as WallSide,d:Math.abs(p.x-room.x),offset:(p.y-room.y)*1000,len:room.h*1000},{wall:'east' as WallSide,d:Math.abs(p.x-room.x-room.w),offset:(p.y-room.y)*1000,len:room.h*1000}].sort((a,b)=>a.d-b.d);const w=kind==='door'?900:1200;const side=sides[0];const mm=Math.max(w/2,Math.min(side.len-w/2,Math.round(side.offset)));const obj={id:Date.now(),kind,x:side.wall==='west'?room.x:side.wall==='east'?room.x+room.w:room.x+mm/1000,y:side.wall==='north'?room.y:side.wall==='south'?room.y+room.h:room.y+mm/1000,name:names[kind],wall:side.wall,offsetMm:mm,widthMm:w,heightMm:kind==='door'?2100:1200,sillMm:kind==='window'?900:0};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice(names[kind]+' an Wand platziert.');}
-      else{const obj={id:Date.now(),kind,x:snapValue(p.x),y:snapValue(p.y),name:kind==='furniture'?catalog[selectedFurniture]:names[kind],model:kind==='furniture'?selectedFurniture:undefined};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice((kind==='furniture'?catalog[selectedFurniture]:names[kind])+' platziert.');}
+      if((kind==='door'||kind==='window')&&room){
+        const candidates=rooms.flatMap(r=>([
+          {room:r,wall:'north' as WallSide,d:Math.abs(p.y-r.y),offset:(p.x-r.x)*1000,len:r.w*1000,axisStart:r.x,axisEnd:r.x+r.w,coordinate:r.y},
+          {room:r,wall:'south' as WallSide,d:Math.abs(p.y-r.y-r.h),offset:(p.x-r.x)*1000,len:r.w*1000,axisStart:r.x,axisEnd:r.x+r.w,coordinate:r.y+r.h},
+          {room:r,wall:'west' as WallSide,d:Math.abs(p.x-r.x),offset:(p.y-r.y)*1000,len:r.h*1000,axisStart:r.y,axisEnd:r.y+r.h,coordinate:r.x},
+          {room:r,wall:'east' as WallSide,d:Math.abs(p.x-r.x-r.w),offset:(p.y-r.y)*1000,len:r.h*1000,axisStart:r.y,axisEnd:r.y+r.h,coordinate:r.x+r.w}
+        ])).filter(c=>c.offset>=-200&&c.offset<=c.len+200).sort((a,b)=>a.d-b.d);
+        const side=candidates[0];const w=kind==='door'?900:1200;
+        if(!side||side.d>.75){setNotice('Keine passende Wand in der Nähe. Platziere die Öffnung direkt auf einer Wand.');return;}
+        const mm=Math.max(w/2,Math.min(side.len-w/2,Math.round(side.offset)));
+        const paired=candidates.filter(c=>c.room.id!==side.room.id&&Math.abs(c.coordinate-side.coordinate)<.18&&Math.min(c.axisEnd,side.axisEnd)-Math.max(c.axisStart,side.axisStart)>.2&&Math.abs(c.offset-mm)<Math.max(200,w/2));
+        const roomIds=[side.room.id,...paired.map(c=>c.room.id)];
+        const wallByRoom:Record<number,WallSide>={[side.room.id]:side.wall};
+        paired.forEach(c=>wallByRoom[c.room.id]=c.wall);
+        const obj={id:Date.now(),kind,x:side.wall==='west'?side.room.x:side.wall==='east'?side.room.x+side.room.w:side.room.x+mm/1000,y:side.wall==='north'?side.room.y:side.wall==='south'?side.room.y+side.room.h:side.room.y+mm/1000,name:names[kind],wall:side.wall,offsetMm:mm,widthMm:w,heightMm:kind==='door'?2100:1200,sillMm:kind==='window'?900:0,roomIds,wallByRoom};
+        setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice(paired.length?'Tür verbindet '+side.room.name+' und '+paired[0].room.name+'.':'Öffnung in '+side.room.name+' platziert.');
+      }
+      else{const obj={id:Date.now(),kind,x:snapValue(p.x),y:snapValue(p.y),name:kind==='furniture'?catalog[selectedFurniture]:kind==='smart'?'Smart-Home-Gerät':kind==='stair'?'Treppe':names[kind],model:kind==='furniture'?selectedFurniture:undefined,device:kind==='smart'?selectedDevice:undefined,stairType:kind==='stair'?selectedStair:undefined};setObjects(os=>[...os,obj]);setSelectedObjectId(obj.id);setNotice((kind==='furniture'?catalog[selectedFurniture]:names[kind])+' platziert.');}
     }
   };
   const onPlanDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -208,11 +247,11 @@ export default function App() {
   const selectedRoomForObject=selectedObject?rooms.find(r=>selectedObject.x>=r.x-.02&&selectedObject.x<=r.x+r.w+.02&&selectedObject.y>=r.y-.02&&selectedObject.y<=r.y+r.h+.02):undefined;
   const selectedWallLength=selectedObject&&selectedRoomForObject?(selectedObject.wall==='north'||selectedObject.wall==='south'?selectedRoomForObject.w:selectedRoomForObject.h)*1000:0;
   const updateOpeningPosition=(side:WallSide,offset:number)=>{if(!selectedObject||!selectedRoomForObject)return;const r=selectedRoomForObject;const max=side==='north'||side==='south'?r.w*1000:r.h*1000;const mm=Math.max(0,Math.min(max,offset));setObjects(os=>os.map(o=>o.id===selectedObject.id?{...o,wall:side,offsetMm:mm,x:side==='west'?r.x:side==='east'?r.x+r.w:r.x+mm/1000,y:side==='north'?r.y:side==='south'?r.y+r.h:r.y+mm/1000}:o));};
-  const objectIcon = (o:PlacedObject) => o.kind==='door'?'🚪':o.kind==='window'?'▥':o.kind==='furniture'?({'sofa':'🛋️','armchair':'🪑','bed':'🛏️','dining-table':'🍽️','dining-chair':'🪑','coffee-table':'▰',wardrobe:'🚪',desk:'🖥️',bookshelf:'📚',fridge:'🧊','kitchen-unit':'🍳',toilet:'🚽',bathtub:'🛁',washbasin:'🚰','floor-lamp':'💡',plant:'🪴'} as Record<string,string>)[o.model||'sofa']:'💡';
+  const objectIcon = (o:PlacedObject) => o.kind==='door'?'🚪':o.kind==='window'?'▥':o.kind==='smart'?'⌂':o.kind==='stair'?'▤':o.kind==='furniture'?({'sofa':'🛋️','armchair':'🪑','bed':'🛏️','dining-table':'🍽️','dining-chair':'🪑','coffee-table':'▰',wardrobe:'🚪',desk:'🖥️',bookshelf:'📚',fridge:'🧊','kitchen-unit':'🍳',toilet:'🚽',bathtub:'🛁',washbasin:'🚰','floor-lamp':'💡',plant:'🪴'} as Record<string,string>)[o.model||'sofa']:'💡';
   return <div className="app">
     <header className="top"><div className="brand"><div className="brandIcon"><Home size={21}/></div><div><b>HomeForge</b><small>STUDIO · EARLY ACCESS</small></div></div><div className="project"><span className="liveDot"/> Mein Traumhaus <span className="saved">{notice||'Änderungen lokal'}</span></div><div className="topActions"><button className="iconBtn" onClick={save} title="Speichern"><Save/></button><button className="iconBtn" onClick={exportJson} title="Exportieren"><Download/></button><button className="share" onClick={exportJson}>Projekt exportieren <Download size={15}/></button></div></header>
     <div className="workspace">
-      <aside className={'left '+(!showLeft?'hide':'')}><div className="sideHead"><span>WERKZEUGE</span><button onClick={()=>setShowLeft(false)}><PanelLeftClose size={16}/></button></div><div className="toolList">{tools.map(t=><button key={t.id} className={'tool '+(tool===t.id?'chosen':'')} onClick={()=>{setTool(t.id);setAnchor(null);if(t.id==='room')setDrawPoints([]);setNotice(t.id==='room'?'Setze mindestens vier Wandpunkte und schließe den Raum ab.':'Werkzeug: '+t.label);}}><t.icon size={19}/><span>{t.label}</span></button>)}</div><div className="sideDivider"/><div className="sideHead"><span>OBJEKTE</span><button onClick={()=>setTool('furniture')}><Plus size={16}/></button></div>{['Möbel & Einrichtung','Türen & Fenster','Beleuchtung','Smart Home','Treppen'].map((v,i)=><button className="category" key={v} onClick={()=>setTool(i===0?'furniture':i===2?'light':'door')}><span>{[<Armchair/>,<DoorOpen/>,<Lamp/>,<Lightbulb/>,<Layers/>][i]}</span>{v}<Plus size={14}/></button>)}{tool==='furniture'&&<div className="furnitureCatalog"><small>3D-MÖBEL AUSWÄHLEN</small>{([['sofa','Sofa'],['armchair','Sessel'],['bed','Doppelbett'],['dining-table','Esstisch'],['dining-chair','Stuhl'],['coffee-table','Couchtisch'],['wardrobe','Kleiderschrank'],['desk','Schreibtisch'],['bookshelf','Bücherregal'],['fridge','Kühlschrank'],['kitchen-unit','Küchenzeile'],['toilet','Toilette'],['bathtub','Badewanne'],['washbasin','Waschbecken'],['floor-lamp','Stehlampe'],['plant','Pflanze']] as [FurnitureModelId,string][]).map(([id,label])=><button key={id} className={selectedFurniture===id?'selectedFurniture':''} onClick={()=>{setSelectedFurniture(id);setTool('furniture');setNotice(label+' ausgewählt – im Grundriss platzieren.')}}>{label}</button>)}</div>}<div className="sideDivider"/><div className="sideHead"><span>GESCHOSSE</span><button onClick={()=>setFloor('Obergeschoss')}><Plus size={16}/></button></div>{['Erdgeschoss','Obergeschoss','Dachgeschoss'].map((f,i)=><button key={f} className={'floor '+(floor===f?'activeFloor':'')} onClick={()=>setFloor(f)}><Layers size={16}/>{f}<span>0{i+1}</span></button>)}</aside>
+      <aside className={'left '+(!showLeft?'hide':'')}><div className="sideHead"><span>WERKZEUGE</span><button onClick={()=>setShowLeft(false)}><PanelLeftClose size={16}/></button></div><div className="toolList">{tools.map(t=><button key={t.id} className={'tool '+(tool===t.id?'chosen':'')} onClick={()=>{setTool(t.id);setAnchor(null);if(t.id==='room')setDrawPoints([]);setNotice(t.id==='room'?'Setze mindestens vier Wandpunkte und schließe den Raum ab.':'Werkzeug: '+t.label);}}><t.icon size={19}/><span>{t.label}</span></button>)}</div><div className="sideDivider"/><div className="sideHead"><span>OBJEKTE</span><button onClick={()=>setTool('furniture')}><Plus size={16}/></button></div>{['Möbel & Einrichtung','Türen & Fenster','Beleuchtung','Smart Home','Treppen'].map((v,i)=><button className="category" key={v} onClick={()=>setTool(['furniture','door','light','smart','stair'][i])}><span>{[<Armchair/>,<DoorOpen/>,<Lamp/>,<Lightbulb/>,<Layers/>][i]}</span>{v}<Plus size={14}/></button>)}{tool==='furniture'&&<div className="furnitureCatalog"><small>3D-MÖBEL AUSWÄHLEN</small>{([['sofa','Sofa'],['armchair','Sessel'],['bed','Doppelbett'],['dining-table','Esstisch'],['dining-chair','Stuhl'],['coffee-table','Couchtisch'],['wardrobe','Kleiderschrank'],['desk','Schreibtisch'],['bookshelf','Bücherregal'],['fridge','Kühlschrank'],['kitchen-unit','Küchenzeile'],['toilet','Toilette'],['bathtub','Badewanne'],['washbasin','Waschbecken'],['floor-lamp','Stehlampe'],['plant','Pflanze']] as [FurnitureModelId,string][]).map(([id,label])=><button key={id} className={selectedFurniture===id?'selectedFurniture':''} onClick={()=>{setSelectedFurniture(id);setTool('furniture');setNotice(label+' ausgewählt – im Grundriss platzieren.')}}>{label}</button>)}</div>}<div className="sideDivider"/><div className="sideHead"><span>GESCHOSSE</span><button onClick={()=>setFloor('Obergeschoss')}><Plus size={16}/></button></div>{['Erdgeschoss','Obergeschoss','Dachgeschoss'].map((f,i)=><button key={f} className={'floor '+(floor===f?'activeFloor':'')} onClick={()=>setFloor(f)}><Layers size={16}/>{f}<span>0{i+1}</span></button>)}</aside>
       <main className="main"><div className="canvasHead"><div className="crumb"><span>PROJEKT</span><b>/</b><strong>{floor}</strong></div><div className="viewSwitch"><button className={view==='2d'?'on':''} onClick={()=>{setRoomModeId(null);setView('2d');}}><Grid3X3 size={15}/> 2D-Plan</button><button className={view==='3d'?'on':''} onClick={()=>{setRoomModeId(null);setView('3d');}}><Move3D size={15}/> 3D-Ansicht</button>{view==='room'&&<button className="on">Raum</button>}</div><div className="canvasTools"><button onClick={()=>setZoom(clampZoom(zoom-.1))} title="Verkleinern"><Minus size={16}/></button><span title="Mausrad oder Zwei-Finger-Geste">{Math.round(zoom*100)}%</span><button onClick={()=>setZoom(clampZoom(zoom+.1))} title="Vergrößern"><Plus size={16}/></button><i/><button className={snapEnabled?"snapActive":""} onClick={()=>setSnapEnabled(v=>!v)} title={snapEnabled?`Rasterfang aktiv · ${Math.round(gridSize*100)} cm`:'Rasterfang aus'}><Grid3X3 size={16}/></button><select className="gridSelect" aria-label="Rasterabstand" value={gridSize} onChange={e=>setGridSize(Number(e.target.value))}><option value={0.05}>5 cm</option><option value={0.1}>10 cm</option><option value={0.25}>25 cm</option><option value={0.5}>50 cm</option><option value={1}>1 m</option></select><button onClick={()=>setShowRight(!showRight)}><Settings size={17}/></button></div></div>
         <div className="canvasArea">{!showLeft&&<button className="reopen leftReopen" onClick={()=>setShowLeft(true)}><PanelLeftClose/></button>}
           {view==='2d'?<div className="planViewport" onWheel={handleWheelZoom} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}><div className="plan" style={{transform:'scale('+zoom+')'}} onPointerDown={onPlanDown} onClick={onPlanClick} onPointerMove={onPlanMove} onPointerUp={()=>{setDrag(null);setObjectDrag(null);}} onPointerCancel={()=>{setDrag(null);setObjectDrag(null);}}>
