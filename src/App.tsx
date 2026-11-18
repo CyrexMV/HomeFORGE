@@ -135,9 +135,9 @@ export default function App() {
     placeAt(point(e));
   };
   const onPlanClick = (e:React.MouseEvent<HTMLDivElement>) => {
+    if(suppressTouchClickRef.current){suppressTouchClickRef.current=false;touchPlacementRef.current=false;return;}
     if(!touchPlacementRef.current)return;
     touchPlacementRef.current=false;
-    if(suppressTouchClickRef.current){suppressTouchClickRef.current=false;return;}
     if(tool==='select'&&(e.target as HTMLElement).closest('.room'))return;
     const rect=(e.currentTarget.closest('.plan') as HTMLElement).getBoundingClientRect();
     placeAt({x:Math.max(0,Math.min(12,(e.clientX-rect.left)/zoom/48)),y:Math.max(0,Math.min(11,(e.clientY-rect.top)/zoom/48))});
