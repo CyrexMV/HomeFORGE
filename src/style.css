@@ -54,3 +54,23 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .gridSelect{height:30px;max-width:72px;border:1px solid #394650;border-radius:6px;background:#171d24;color:#cbd5dd;padding:0 5px;font-size:10px;outline:none}
 .gridSelect:focus-visible{outline:2px solid #e9bd86;outline-offset:2px}
 @media(pointer:coarse){.gridSelect{height:38px;min-width:66px}}
+
+/* Technical architectural drawing appearance based on supplied references */
+.plan{background-color:#fff;background-image:linear-gradient(#e1e6e9 1px,transparent 1px),linear-gradient(90deg,#e1e6e9 1px,transparent 1px);background-size:24px 24px;border:2px solid #28323a;box-shadow:0 12px 35px #0005}
+.plan.architecture .room{border:3px solid #176c86;box-shadow:none;color:#17232c}
+.plan.architecture .room:nth-of-type(even){border-color:#234a9b}
+.plan.architecture .room.selectedRoom{outline:2px solid #152c54;outline-offset:0;z-index:2}
+.plan.architecture .roomName{font-size:17px;font-weight:800;color:#101820}
+.plan.architecture .room small{font-size:13px;color:#283746;opacity:1;border:1px solid #53616a;padding:5px 20px;min-width:86px;text-align:center;margin-top:9px;background:#ffffff66}
+.plan.electrical{background-color:#fff;background-image:linear-gradient(#e8ecee 1px,transparent 1px),linear-gradient(90deg,#e8ecee 1px,transparent 1px);color:#20262a}
+.plan.electrical .room{border:2px solid #626e73;background:#ffffffb8!important;box-shadow:none;color:#344047}
+.plan.electrical .roomName{font-size:14px;font-weight:500;color:#92966c}
+.plan.electrical .room small{display:none}
+.electricalRoomMeta{font-size:9px;color:#778187;margin-top:3px}
+.plan.electrical .placedObject{border-radius:50%;background:#fff;border:2px solid #168a9a;color:#138c9a;font-weight:900;box-shadow:none}
+.plan.electrical .placedObject.smart{border-color:#4d936e;color:#347d57}
+.plan.electrical .placedObject.light{border-color:#c62d5b;color:#c62d5b;font-size:21px}
+.plan.electrical .placedObject.door,.plan.electrical .placedObject.window{border-radius:2px}
+.plan.electrical .dimension{color:#313a40;text-shadow:0 1px 2px #fff}
+.canvasTools button.snapActive{background:#e8edf0;color:#1e4d77;box-shadow:inset 0 0 0 1px #55728a}
+@media(max-width:650px){.plan.architecture .roomName{font-size:14px}.plan.architecture .room small{font-size:11px;padding:4px 10px}}
