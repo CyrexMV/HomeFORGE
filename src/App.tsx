@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Home, MousePointer2, Square, DoorOpen, PanelsTopLeft, Armchair, Lamp, Lightbulb, Layers, Save, Download, Undo2, Redo2, Grid3X3, Settings, Plus, Minus, Move3D, Ruler, Trash2, PanelLeftClose, PanelRightClose, X } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
-import { Shape } from 'three';
+import { DataTexture, RGBAFormat, RepeatWrapping, Shape } from 'three';
 import { OrbitControls, Grid, Environment } from '@react-three/drei';
 
 type Room = { id: number; name: string; x: number; y: number; w: number; h: number; color: string; wallThicknessMm?: number; polygon?: {x:number;y:number}[] };
@@ -31,7 +31,28 @@ const tools = [
 ] as const;
 function FurnitureModel({ object }: { object: PlacedObject }) {
   const wood = '#9b704b', darkWood = '#60432f', fabric = '#9aa9b5', fabricLight = '#c4cdd2', metal = '#414b53', white = '#e9e8e2';
-  const part = (x:number,y:number,z:number,sx:number,sy:number,sz:number,color:string, radius=0) => <mesh position={[x,y,z]} castShadow receiveShadow><boxGeometry args={[sx,sy,sz]}/><meshStandardMaterial color={color} roughness={radius || .78}/></mesh>;
+  const textures = useMemo(() => {
+    const make = (kind:'wood'|'fabric'|'stone') => {
+      const size=128, data=new Uint8Array(size*size*4);
+      for(let y=0;y<size;y++) for(let x=0;x<size;x++) {
+        const grain=Math.sin(y*.24+Math.sin(x*.055)*2.8)+Math.sin(y*.73+x*.018)*.22;
+        const weave=((x%5===0)?-13:0)+((y%5===0)?-10:0);
+        const vein=Math.max(0,1-Math.abs(Math.sin((x+y*.38)*.075+Math.sin(y*.11)*1.7)))*.22;
+        const noise=Math.sin(x*12.9898+y*78.233)*43758.5453;
+        const random=(noise-Math.floor(noise)-.5)*12;
+        let value=kind==='wood'?154+grain*13+random:kind==='fabric'?190+weave+random:218-vein*125+random;
+        const i=(y*size+x)*4; data[i]=value;data[i+1]=value;data[i+2]=value;data[i+3]=255;
+      }
+      const texture=new DataTexture(data,size,size,RGBAFormat);
+      texture.wrapS=RepeatWrapping;texture.wrapT=RepeatWrapping;texture.repeat.set(2,2);texture.needsUpdate=true;
+      return texture;
+    };
+    return {wood:make('wood'),fabric:make('fabric'),stone:make('stone')};
+  },[]);
+  const part = (x:number,y:number,z:number,sx:number,sy:number,sz:number,color:string, radius=0) => {
+    const map=color===wood||color===darkWood?textures.wood:color===fabric||color===fabricLight?textures.fabric:color===white?textures.stone:undefined;
+    return <mesh position={[x,y,z]} castShadow receiveShadow><boxGeometry args={[sx,sy,sz]}/><meshStandardMaterial color={color} map={map} roughness={radius || .78}/></mesh>;
+  };
   const cyl = (x:number,y:number,z:number,r:number,h:number,color:string) => <mesh position={[x,y,z]} castShadow><cylinderGeometry args={[r,r,h,20]}/><meshStandardMaterial color={color} roughness={.7}/></mesh>;
   const model = object.model || 'sofa';
   return <group position={[object.x,0,object.y]} rotation={[0,object.rotation||0,0]}>
